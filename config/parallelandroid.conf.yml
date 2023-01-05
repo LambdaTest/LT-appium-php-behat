@@ -8,8 +8,8 @@ default:
                 - FeatureContext:
                     parameters:
                         server: "mobile-hub.lambdatest.com"
-                        user: "YOUR USERNAME HERE"       #Add LambdaTest username here 
-                        key: "YOUR ACCESS KEY HERE"      #Add LambdaTest accessKey here
+                        user: ${LT_USERNAME}       #Add LambdaTest username here 
+                        key: ${LT_ACCESS_KEY}      #Add LambdaTest accessKey here
                         capabilities:
                             # common capabilities added for every test
                             build: "behat-parallel-android"

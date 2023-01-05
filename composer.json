@@ -1,9 +1,11 @@
 {
   "require": {
-    "behat/behat": "^3.10.0",
+    "behat/behat": "^3.12",
     "facebook/webdriver": "dev-master",
     "appium/php-client": "dev-master",
-    "symfony/yaml": "*"
+    "symfony/yaml": "*",
+    "phpwhois/phpwhois": "^4.2",
+    "php-webdriver/webdriver": "^1.1"
   },
   "config": {
       "bin-dir": "bin/"
@@ -20,4 +22,3 @@
     "classmap": ["lib/"]
   }
 }
-
