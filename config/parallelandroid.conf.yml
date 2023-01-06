@@ -22,15 +22,15 @@ default:
                             # simply define multiple capabilities below and execute the test with
                             # $ php run-parallel.php -c config/<filename>.yml
                         -
-                            deviceName: Galaxy S21 Ultra 5G
+                            deviceName: Galaxy .*
                             platform: Android
                             platformVersion: 11
                         -
-                            deviceName: OnePlus 9 Pro
+                            deviceName: OnePlus .*
                             platform: Android
                             platformVersion: 11
                         -
-                            deviceName: Redmi 9
+                            deviceName: Redmi .*
                             platform: Android
                             platformVersion: 10
 

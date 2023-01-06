@@ -22,15 +22,15 @@ default:
                             # simply define multiple capabilities below and execute the test with
                             # $ php run-parallel.php -c config/<filename>.yml
                         -
-                            deviceName: iPhone 11
+                            deviceName: iPhone .*
                             platform: ios
                             platformVersion: 13
                         -
-                            deviceName: iPad Pro 11 (2021)
+                            deviceName: iPad .*
                             platform: ios
                             platformVersion: 14
                         -
-                            deviceName: iPhone 13 Pro Max
+                            deviceName: iPhone .*
                             platform: ios
                             platformVersion: 15
 

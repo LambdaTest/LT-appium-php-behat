@@ -17,7 +17,7 @@ default:
                             app: "lt://proverbial-android"   #Add your app url here
                         environments:
                             -
-                                deviceName: Galaxy S21 Ultra 5G
+                                deviceName: Galaxy .*
                                 platform: Android
                                 platformVersion: 11
 

@@ -17,7 +17,7 @@ default:
                             app: "lt://proverbial-ios"    #Add app url here
                         environments:
                             -
-                                deviceName: iPhone 11
+                                deviceName: iPhone .*
                                 platform: ios
                                 platformVersion: 14
 
