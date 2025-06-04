@@ -7,18 +7,25 @@ default:
             contexts:
              - FeatureContext:
                     parameters:
-                        server: "mobile-hub.lambdatest.com"
-                        user: ${LT_USERNAME}       #Add LambdaTest username here 
-                        key: ${LT_ACCESS_KEY}      #Add LambdaTest accessKey here
+                        server: mobile-hub.lambdatest.com
+                        user: "${LT_USERNAME}"
+                        key: "${LT_ACCESS_KEY}"
                         capabilities:
                             build: "behat-appium-android"
                             name: "single-behat-test"
                             isRealMobile: true
-                            app: "lt://proverbial-android"   #Add your app url here
+                            app: "${ANDROID_APP_ID}"
+                            deviceName: Galaxy S21 Ultra 5G
+                            platformName: Android
+                            platformVersion: 11
+                            visual: true
+                            network: true
+                            console: true
+                            autoGrantPermissions: true
                         environments:
                             -
-                                deviceName: Galaxy .*
-                                platform: Android
-                                platformVersion: 11
+                                deviceName: "Galaxy S24 Ultra"
+                                platform: "Android"
+                                platformVersion: "14"
 
 
