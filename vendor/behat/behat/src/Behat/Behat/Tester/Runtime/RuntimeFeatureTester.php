@@ -12,6 +12,7 @@ namespace Behat\Behat\Tester\Runtime;
 
 use Behat\Behat\Tester\OutlineTester;
 use Behat\Behat\Tester\ScenarioTester;
+use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Node\OutlineNode;
 use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Environment\EnvironmentManager;
@@ -19,70 +20,46 @@ use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 use Behat\Testwork\Tester\SpecificationTester;
 
 /**
  * Tester executing feature tests in the runtime.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @implements SpecificationTester<FeatureNode>
  */
 final class RuntimeFeatureTester implements SpecificationTester
 {
     /**
-     * @var ScenarioTester
-     */
-    private $scenarioTester;
-    /**
-     * @var OutlineTester
-     */
-    private $outlineTester;
-    /**
-     * @var EnvironmentManager
-     */
-    private $envManager;
-
-    /**
-     * Initializes tester.
-     *
-     * @param ScenarioTester     $scenarioTester
-     * @param OutlineTester      $outlineTester
-     * @param EnvironmentManager $envManager
-     *
-     * TODO: Remove EnvironmentManager parameter in next major
+     * @param EnvironmentManager $envManager deprecated , will be removed in the next major version
      */
     public function __construct(
-        ScenarioTester $scenarioTester,
-        OutlineTester $outlineTester,
-        EnvironmentManager $envManager
+        private readonly ScenarioTester $scenarioTester,
+        private readonly OutlineTester $outlineTester,
+        EnvironmentManager $envManager,
     ) {
-        $this->scenarioTester = $scenarioTester;
-        $this->outlineTester = $outlineTester;
-        $this->envManager = $envManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, $spec, $skip)
+    public function setUp(Environment $env, $spec, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, $feature, $skip = false)
+    public function test(Environment $env, $spec, $skip = false): TestResult
     {
-        $results = array();
-        foreach ($feature->getScenarios() as $scenario) {
+        $results = [];
+        foreach ($spec->getScenarios() as $scenario) {
             $tester = $scenario instanceof OutlineNode ? $this->outlineTester : $this->scenarioTester;
 
-            $setup = $tester->setUp($env, $feature, $scenario, $skip);
+            $setup = $tester->setUp($env, $spec, $scenario, $skip);
             $localSkip = !$setup->isSuccessful() || $skip;
-            $testResult = $tester->test($env, $feature, $scenario, $localSkip);
-            $teardown = $tester->tearDown($env, $feature, $scenario, $localSkip, $testResult);
+            $testResult = $tester->test($env, $spec, $scenario, $localSkip);
+            $teardown = $tester->tearDown($env, $spec, $scenario, $localSkip, $testResult);
 
             $integerResult = new IntegerTestResult($testResult->getResultCode());
             $results[] = new TestWithSetupResult($setup, $integerResult, $teardown);
@@ -91,10 +68,7 @@ final class RuntimeFeatureTester implements SpecificationTester
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, $spec, $skip, TestResult $result)
+    public function tearDown(Environment $env, $spec, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

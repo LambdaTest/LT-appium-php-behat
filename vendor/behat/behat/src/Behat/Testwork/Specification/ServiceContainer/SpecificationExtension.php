@@ -13,6 +13,7 @@ namespace Behat\Testwork\Specification\ServiceContainer;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
+use Behat\Testwork\Specification\SpecificationFinder;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -41,75 +42,54 @@ final class SpecificationExtension implements Extension
 
     /**
      * Initializes extension.
-     *
-     * @param null|ServiceProcessor $processor
      */
-    public function __construct(ServiceProcessor $processor = null)
+    public function __construct(?ServiceProcessor $processor = null)
     {
-        $this->processor = $processor ? : new ServiceProcessor();
+        $this->processor = $processor ?: new ServiceProcessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'specifications';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $this->loadFinder($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processLocators($container);
     }
 
     /**
      * Loads specification finder.
-     *
-     * @param ContainerBuilder $container
      */
-    private function loadFinder(ContainerBuilder $container)
+    private function loadFinder(ContainerBuilder $container): void
     {
-        $definition = new Definition('Behat\Testwork\Specification\SpecificationFinder');
+        $definition = new Definition(SpecificationFinder::class);
         $container->setDefinition(self::FINDER_ID, $definition);
     }
 
     /**
      * Processes specification locators.
-     *
-     * @param ContainerBuilder $container
      */
-    private function processLocators(ContainerBuilder $container)
+    private function processLocators(ContainerBuilder $container): void
     {
         $references = $this->processor->findAndSortTaggedServices($container, self::LOCATOR_TAG);
         $definition = $container->getDefinition(self::FINDER_ID);
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerSpecificationLocator', array($reference));
+            $definition->addMethodCall('registerSpecificationLocator', [$reference]);
         }
     }
 }

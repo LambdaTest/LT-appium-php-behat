@@ -27,85 +27,53 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class BeforeStepTeardown extends StepTested implements BeforeTeardown
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var StepNode
-     */
-    private $step;
-    /**
-     * @var StepResult
-     */
-    private $result;
-
-    /**
      * Initializes event.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param StepNode    $step
-     * @param StepResult  $result
      */
     public function __construct(
         Environment $env,
-        FeatureNode $feature,
-        StepNode $step,
-        StepResult $result
+        private readonly FeatureNode $feature,
+        private readonly StepNode $step,
+        private readonly StepResult $result,
     ) {
         parent::__construct($env);
-
-        $this->feature = $feature;
-        $this->step = $step;
-        $this->result = $result;
     }
 
     /**
      * Returns feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns step node.
-     *
-     * @return StepNode
      */
-    public function getStep()
+    public function getStep(): StepNode
     {
         return $this->step;
     }
 
     /**
      * Returns current test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }
 
     /**
      * Checks if step call produced any output (stdOut or exception).
-     *
-     * @return bool
      */
-    public function hasOutput()
+    public function hasOutput(): bool
     {
         return $this->resultHasException() || $this->resultCallHasOutput();
     }
 
     /**
      * Checks if result has produced exception.
-     *
-     * @return bool
      */
-    private function resultHasException()
+    private function resultHasException(): bool
     {
         return $this->result instanceof ExceptionResult && $this->result->getException();
     }

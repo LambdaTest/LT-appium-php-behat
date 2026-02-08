@@ -11,7 +11,7 @@
 namespace Behat\Behat\Hook\Scope;
 
 use Behat\Gherkin\Node\FeatureNode;
-use Behat\Gherkin\Node\ScenarioInterface as Scenario;
+use Behat\Gherkin\Node\ScenarioInterface;
 use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Suite\Suite;
 
@@ -23,38 +23,19 @@ use Behat\Testwork\Suite\Suite;
 final class BeforeScenarioScope implements ScenarioScope
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var Scenario
-     */
-    private $scenario;
-
-    /**
      * Initializes scope.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param Scenario    $scenario
      */
-    public function __construct(Environment $env, FeatureNode $feature, Scenario $scenario)
-    {
-        $this->environment = $env;
-        $this->feature = $feature;
-        $this->scenario = $scenario;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly FeatureNode $feature,
+        private readonly ScenarioInterface $scenario,
+    ) {
     }
 
     /**
      * Returns hook scope name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::BEFORE;
     }
@@ -71,30 +52,24 @@ final class BeforeScenarioScope implements ScenarioScope
 
     /**
      * Returns hook environment.
-     *
-     * @return Environment
      */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
     /**
      * Returns scope feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns scenario.
-     *
-     * @return Scenario
      */
-    public function getScenario()
+    public function getScenario(): ScenarioInterface
     {
         return $this->scenario;
     }

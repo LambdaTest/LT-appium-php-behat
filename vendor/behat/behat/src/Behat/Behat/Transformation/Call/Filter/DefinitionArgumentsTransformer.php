@@ -26,42 +26,34 @@ final class DefinitionArgumentsTransformer implements CallFilter
     /**
      * @var ArgumentTransformer[]
      */
-    private $argumentTransformers = array();
+    private $argumentTransformers = [];
 
     /**
      * Registers new argument transformer.
-     *
-     * @param ArgumentTransformer $transformer
      */
-    public function registerArgumentTransformer(ArgumentTransformer $transformer)
+    public function registerArgumentTransformer(ArgumentTransformer $transformer): void
     {
         $this->argumentTransformers[] = $transformer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsCall(Call $call)
+    public function supportsCall(Call $call): bool
     {
         return $call instanceof DefinitionCall;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function filterCall(Call $definitionCall)
+    public function filterCall(Call $call)
     {
-        if (!$definitionCall instanceof DefinitionCall) {
+        if (!$call instanceof DefinitionCall) {
             throw new UnsupportedCallException(sprintf(
                 'DefinitionArgumentTransformer can not filter `%s` call.',
-                get_class($definitionCall)
-            ), $definitionCall);
+                $call::class
+            ), $call);
         }
 
-        $newArguments = array();
+        $newArguments = [];
         $transformed = false;
-        foreach ($definitionCall->getArguments() as $index => $value) {
-            $newValue = $this->transformArgument($definitionCall, $index, $value);
+        foreach ($call->getArguments() as $index => $value) {
+            $newValue = $this->transformArgument($call, $index, $value);
 
             if ($newValue !== $value) {
                 $transformed = true;
@@ -71,27 +63,23 @@ final class DefinitionArgumentsTransformer implements CallFilter
         }
 
         if (!$transformed) {
-            return $definitionCall;
+            return $call;
         }
 
         return new DefinitionCall(
-            $definitionCall->getEnvironment(),
-            $definitionCall->getFeature(),
-            $definitionCall->getStep(),
-            $definitionCall->getCallee(),
+            $call->getEnvironment(),
+            $call->getFeature(),
+            $call->getStep(),
+            $call->getCallee(),
             $newArguments,
-            $definitionCall->getErrorReportingLevel()
+            $call->getErrorReportingLevel()
         );
     }
 
     /**
      * Transforms call argument using registered transformers.
      *
-     * @param DefinitionCall $definitionCall
-     * @param integer|string $index
-     * @param mixed          $value
-     *
-     * @return mixed
+     * @param int|string $index
      */
     private function transformArgument(DefinitionCall $definitionCall, $index, $value)
     {

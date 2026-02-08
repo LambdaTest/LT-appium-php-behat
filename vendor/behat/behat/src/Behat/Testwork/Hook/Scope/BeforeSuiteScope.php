@@ -10,8 +10,8 @@
 
 namespace Behat\Testwork\Hook\Scope;
 
-use Behat\Testwork\Specification\SpecificationIterator;
 use Behat\Testwork\Environment\Environment;
+use Behat\Testwork\Specification\SpecificationIterator;
 
 /**
  * Represents a scope for BeforeSuite hook.
@@ -21,54 +21,32 @@ use Behat\Testwork\Environment\Environment;
 final class BeforeSuiteScope implements SuiteScope
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var SpecificationIterator
-     */
-    private $iterator;
-
-    /**
      * Initializes scope.
      *
-     * @param Environment           $env
-     * @param SpecificationIterator $iterator
+     * @param SpecificationIterator<mixed> $iterator
      */
-    public function __construct(Environment $env, SpecificationIterator $iterator)
-    {
-        $this->environment = $env;
-        $this->iterator = $iterator;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly SpecificationIterator $iterator,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return self::BEFORE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSuite()
     {
         return $this->environment->getSuite();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSpecificationIterator()
+    public function getSpecificationIterator(): SpecificationIterator
     {
         return $this->iterator;
     }

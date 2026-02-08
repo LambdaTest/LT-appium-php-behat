@@ -22,32 +22,18 @@ use Behat\Testwork\Suite\Suite;
 final class BeforeFeatureScope implements FeatureScope
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var FeatureNode
-     */
-    private $feature;
-
-    /**
      * Initializes scope.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
      */
-    public function __construct(Environment $env, FeatureNode $feature)
-    {
-        $this->environment = $env;
-        $this->feature = $feature;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly FeatureNode $feature,
+    ) {
     }
 
     /**
      * Returns hook scope name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::BEFORE;
     }
@@ -64,20 +50,16 @@ final class BeforeFeatureScope implements FeatureScope
 
     /**
      * Returns hook environment.
-     *
-     * @return Environment
      */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
     /**
      * Returns scope feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }

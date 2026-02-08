@@ -2,7 +2,7 @@
     "name": "behat/behat",
     "description": "Scenario-oriented BDD framework for PHP",
     "keywords": ["BDD", "ScenarioBDD", "StoryBDD", "Examples", "Scrum", "Agile", "User story", "Symfony", "business", "development", "testing", "documentation"],
-    "homepage": "http://behat.org/",
+    "homepage": "https://behat.org/",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -14,25 +14,31 @@
     ],
 
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": ">=8.1 <8.6",
         "ext-mbstring": "*",
-        "behat/gherkin": "^4.9.0",
-        "behat/transliterator": "^1.2",
-        "symfony/console": "^4.4 || ^5.0 || ^6.0",
-        "symfony/config": "^4.4 || ^5.0 || ^6.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
-        "symfony/event-dispatcher": "^4.4 || ^5.0 || ^6.0",
-        "symfony/translation": "^4.4 || ^5.0 || ^6.0",
-        "symfony/yaml": "^4.4 || ^5.0 || ^6.0",
-        "psr/container": "^1.0 || ^2.0"
+        "composer-runtime-api": "^2.2",
+        "behat/gherkin": "^4.12.0",
+        "composer/xdebug-handler": "^1.4 || ^2.0 || ^3.0",
+        "nikic/php-parser": "^4.19.2 || ^5.2",
+        "psr/container": "^1.0 || ^2.0",
+        "symfony/config": "^5.4 || ^6.4 || ^7.0",
+        "symfony/console": "^5.4 || ^6.4 || ^7.0",
+        "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0",
+        "symfony/event-dispatcher": "^5.4 || ^6.4 || ^7.0",
+        "symfony/translation": "^5.4 || ^6.4 || ^7.0",
+        "symfony/yaml": "^5.4 || ^6.4 || ^7.0"
     },
 
     "require-dev": {
-        "symfony/process": "^4.4 || ^5.0 || ^6.0",
-        "phpunit/phpunit": "^8.5 || ^9.0",
-        "herrera-io/box": "~1.6.1",
-        "vimeo/psalm": "^4.8",
-        "phpspec/prophecy": "^1.15"
+        "opis/json-schema": "^2.5",
+        "php-cs-fixer/shim": "^3.89",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^9.6",
+        "rector/rector": "2.1.7",
+        "sebastian/diff": "^4.0",
+        "symfony/filesystem": "^5.4 || ^6.4 || ^7.0",
+        "symfony/polyfill-php84": "^1.31",
+        "symfony/process": "^5.4 || ^6.4 || ^7.0"
     },
 
     "suggest": {
@@ -42,23 +48,40 @@
     "autoload": {
         "psr-4": {
             "Behat\\Behat\\": "src/Behat/Behat/",
+            "Behat\\Config\\": "src/Behat/Config/",
             "Behat\\Testwork\\": "src/Behat/Testwork/",
             "Behat\\Step\\": "src/Behat/Step/",
-            "Behat\\Hook\\": "src/Behat/Hook/"
+            "Behat\\Hook\\": "src/Behat/Hook/",
+            "Behat\\Transformation\\": "src/Behat/Transformation/"
         }
     },
 
     "autoload-dev": {
         "psr-4": {
-            "Behat\\Tests\\": "tests/"
+            "Behat\\Tests\\": "tests/Behat/Tests/"
         }
     },
 
-    "extra": {
-        "branch-alias": {
-            "dev-master": "3.x-dev"
-        }
+    "scripts": {
+        "all-tests": [
+            "@cs",
+            "@behat-progress",
+            "@phpunit",
+            "@phpstan",
+            "@rector"
+        ],
+        "behat": "LANG=C bin/behat  --rerun",
+        "behat-progress": "LANG=C bin/behat --format=progress",
+        "phpstan": "phpstan",
+        "phpunit": "phpunit",
+        "cs": "php-cs-fixer fix --dry-run --verbose --diff",
+        "cs-fix": "php-cs-fixer fix",
+        "rector": "rector --dry-run",
+        "rector-fix": "rector"
     },
 
-    "bin": ["bin/behat"]
+    "bin": ["bin/behat"],
+    "config": {
+        "sort-packages": true
+    }
 }

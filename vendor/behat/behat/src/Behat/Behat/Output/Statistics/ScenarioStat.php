@@ -10,56 +10,40 @@
 
 namespace Behat\Behat\Output\Statistics;
 
+use Behat\Testwork\Tester\Result\TestResult;
+use Behat\Testwork\Tester\Result\TestResults;
+use Stringable;
+
 /**
  * Behat scenario stat.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class ScenarioStat
+final class ScenarioStat implements Stringable
 {
     /**
-     * @var string
+     * @param TestResult::*|TestResults::NO_TESTS $resultCode
      */
-    private $title;
-    /**
-     * @var string
-     */
-    private $path;
-    /**
-     * @var integer
-     */
-    private $resultCode;
-
-    /**
-     * Initializes scenario stat.
-     *
-     * @param string  $title
-     * @param string  $path
-     * @param integer $resultCode
-     */
-    public function __construct($title, $path, $resultCode)
-    {
-        $this->title = $title;
-        $this->path = $path;
-        $this->resultCode = $resultCode;
+    public function __construct(
+        private ?string $title,
+        private readonly string $path,
+        private readonly int $resultCode,
+    ) {
+        $this->title = null;
     }
 
     /**
      * Returns scenario title.
-     *
-     * @return string
      */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
      * Returns scenario path.
-     *
-     * @return string
      */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
@@ -67,9 +51,9 @@ final class ScenarioStat
     /**
      * Returns scenario result code.
      *
-     * @return integer
+     * @return TestResult::*|TestResults::NO_TESTS
      */
-    public function getResultCode()
+    public function getResultCode(): int
     {
         return $this->resultCode;
     }

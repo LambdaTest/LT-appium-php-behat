@@ -22,29 +22,21 @@ use RuntimeException;
 final class FeatureHasNoBackgroundException extends RuntimeException implements TestworkException
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-
-    /**
      * Initializes exception.
      *
      * @param string      $message
-     * @param FeatureNode $feature
      */
-    public function __construct($message, FeatureNode $feature)
-    {
-        $this->feature = $feature;
-
+    public function __construct(
+        $message,
+        private readonly FeatureNode $feature,
+    ) {
         parent::__construct($message);
     }
 
     /**
      * Returns feature that caused exception.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }

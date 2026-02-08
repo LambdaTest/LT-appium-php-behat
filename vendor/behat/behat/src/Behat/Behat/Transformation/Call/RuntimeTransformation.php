@@ -12,6 +12,7 @@ namespace Behat\Behat\Transformation\Call;
 
 use Behat\Behat\Transformation\Transformation;
 use Behat\Testwork\Call\RuntimeCallee;
+use Stringable;
 
 /**
  * Transformation that is created and executed in the runtime.
@@ -20,38 +21,28 @@ use Behat\Testwork\Call\RuntimeCallee;
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class RuntimeTransformation extends RuntimeCallee implements Transformation
+final class RuntimeTransformation extends RuntimeCallee implements Stringable, Transformation
 {
-    /**
-     * @var string
-     */
-    private $pattern;
-
     /**
      * Initializes transformation.
      *
      * @param string      $pattern
      * @param callable    $callable
-     * @param null|string $description
+     * @param string|null $description
      */
-    public function __construct($pattern, $callable, $description = null)
-    {
-        $this->pattern = $pattern;
-
+    public function __construct(
+        private $pattern,
+        $callable,
+        $description = null,
+    ) {
         parent::__construct($callable, $description);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPattern()
     {
         return $this->pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return 'Transform ' . $this->getPattern();

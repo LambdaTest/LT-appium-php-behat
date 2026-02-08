@@ -21,29 +21,14 @@ use Behat\Testwork\Tester\Setup\Setup;
 final class HookedSetup implements Setup
 {
     /**
-     * @var Setup
-     */
-    private $setup;
-    /**
-     * @var CallResults
-     */
-    private $hookCallResults;
-
-    /**
      * Initializes setup.
-     *
-     * @param Setup       $setup
-     * @param CallResults $hookCallResults
      */
-    public function __construct(Setup $setup, CallResults $hookCallResults)
-    {
-        $this->setup = $setup;
-        $this->hookCallResults = $hookCallResults;
+    public function __construct(
+        private readonly Setup $setup,
+        private readonly CallResults $hookCallResults,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isSuccessful()
     {
         if ($this->hookCallResults->hasExceptions()) {
@@ -53,20 +38,15 @@ final class HookedSetup implements Setup
         return $this->setup->isSuccessful();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasOutput()
+    public function hasOutput(): bool
     {
         return $this->hookCallResults->hasStdOuts() || $this->hookCallResults->hasExceptions();
     }
 
     /**
      * Returns hook call results.
-     *
-     * @return CallResults
      */
-    public function getHookCallResults()
+    public function getHookCallResults(): CallResults
     {
         return $this->hookCallResults;
     }

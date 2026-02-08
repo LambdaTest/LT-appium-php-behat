@@ -11,6 +11,7 @@
 namespace Behat\Testwork\Suite\Generator;
 
 use Behat\Testwork\Suite\GenericSuite;
+use Behat\Testwork\Suite\Suite;
 
 /**
  * Generates generic test suites.
@@ -20,40 +21,25 @@ use Behat\Testwork\Suite\GenericSuite;
 final class GenericSuiteGenerator implements SuiteGenerator
 {
     /**
-     * @var array
-     */
-    private $defaultSettings = array();
-
-    /**
      * Initializes suite generator.
-     *
-     * @param array $defaultSettings
      */
-    public function __construct(array $defaultSettings = array())
-    {
-        $this->defaultSettings = $defaultSettings;
+    public function __construct(
+        private readonly array $defaultSettings = [],
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsTypeAndSettings($type, array $settings)
+    public function supportsTypeAndSettings($type, array $settings): bool
     {
         return null === $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generateSuite($suiteName, array $settings)
+    public function generateSuite($suiteName, array $settings): Suite
     {
         return new GenericSuite($suiteName, $this->mergeDefaultSettings($settings));
     }
 
     /**
      * Merges provided settings into default ones.
-     *
-     * @param array $settings
      *
      * @return array
      */

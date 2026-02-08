@@ -14,6 +14,7 @@ use Behat\Behat\Output\Node\Printer\Helper\ResultToStringConverter;
 use Behat\Behat\Output\Node\Printer\SetupPrinter;
 use Behat\Testwork\Call\CallResult;
 use Behat\Testwork\Exception\ExceptionPresenter;
+use Behat\Testwork\Hook\Call\RuntimeHook;
 use Behat\Testwork\Hook\Tester\Setup\HookedSetup;
 use Behat\Testwork\Hook\Tester\Setup\HookedTeardown;
 use Behat\Testwork\Output\Formatter;
@@ -30,53 +31,28 @@ use Behat\Testwork\Tester\Setup\Teardown;
 final class PrettySetupPrinter implements SetupPrinter
 {
     /**
-     * @var ResultToStringConverter
-     */
-    private $resultConverter;
-    /**
-     * @var ExceptionPresenter
-     */
-    private $exceptionPresenter;
-    /**
      * @var string
      */
     private $indentText;
-    /**
-     * @var bool
-     */
-    private $newlineBefore;
-    /**
-     * @var bool
-     */
-    private $newlineAfter;
 
     /**
      * Initializes printer.
      *
-     * @param ResultToStringConverter $resultConverter
-     * @param ExceptionPresenter      $exceptionPresenter
-     * @param integer                 $indentation
-     * @param bool                 $newlineBefore
-     * @param bool                 $newlineAfter
+     * @param int  $indentation
+     * @param bool $newlineBefore
+     * @param bool $newlineAfter
      */
     public function __construct(
-        ResultToStringConverter $resultConverter,
-        ExceptionPresenter $exceptionPresenter,
+        private readonly ResultToStringConverter $resultConverter,
+        private readonly ExceptionPresenter $exceptionPresenter,
         $indentation = 0,
-        $newlineBefore = false,
-        $newlineAfter = false
+        private $newlineBefore = false,
+        private $newlineAfter = false,
     ) {
-        $this->resultConverter = $resultConverter;
-        $this->exceptionPresenter = $exceptionPresenter;
         $this->indentText = str_repeat(' ', intval($indentation));
-        $this->newlineBefore = $newlineBefore;
-        $this->newlineAfter = $newlineAfter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function printSetup(Formatter $formatter, Setup $setup)
+    public function printSetup(Formatter $formatter, Setup $setup): void
     {
         if (!$setup instanceof HookedSetup) {
             return;
@@ -87,10 +63,7 @@ final class PrettySetupPrinter implements SetupPrinter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function printTeardown(Formatter $formatter, Teardown $teardown)
+    public function printTeardown(Formatter $formatter, Teardown $teardown): void
     {
         if (!$teardown instanceof HookedTeardown) {
             return;
@@ -103,11 +76,8 @@ final class PrettySetupPrinter implements SetupPrinter
 
     /**
      * Prints setup hook call result.
-     *
-     * @param OutputPrinter $printer
-     * @param CallResult    $callResult
      */
-    private function printSetupHookCallResult(OutputPrinter $printer, CallResult $callResult)
+    private function printSetupHookCallResult(OutputPrinter $printer, CallResult $callResult): void
     {
         if (!$callResult->hasStdOut() && !$callResult->hasException()) {
             return;
@@ -118,6 +88,7 @@ final class PrettySetupPrinter implements SetupPrinter
         $hook = $callResult->getCall()->getCallee();
         $path = $hook->getPath();
 
+        assert($hook instanceof RuntimeHook);
         $printer->writeln(
             sprintf('%s┌─ {+%s}@%s{-%s} {+comment}# %s{-comment}', $this->indentText, $style, $hook, $style, $path)
         );
@@ -134,11 +105,8 @@ final class PrettySetupPrinter implements SetupPrinter
 
     /**
      * Prints teardown hook call result.
-     *
-     * @param OutputPrinter $printer
-     * @param CallResult    $callResult
      */
-    private function printTeardownHookCallResult(OutputPrinter $printer, CallResult $callResult)
+    private function printTeardownHookCallResult(OutputPrinter $printer, CallResult $callResult): void
     {
         if (!$callResult->hasStdOut() && !$callResult->hasException()) {
             return;
@@ -154,6 +122,7 @@ final class PrettySetupPrinter implements SetupPrinter
         $this->printHookCallStdOut($printer, $callResult, $this->indentText);
         $this->printHookCallException($printer, $callResult, $this->indentText);
 
+        assert($hook instanceof RuntimeHook);
         $printer->writeln(
             sprintf('%s└─ {+%s}@%s{-%s} {+comment}# %s{-comment}', $this->indentText, $style, $hook, $style, $path)
         );
@@ -166,44 +135,40 @@ final class PrettySetupPrinter implements SetupPrinter
     /**
      * Prints hook call output (if has some).
      *
-     * @param OutputPrinter $printer
-     * @param CallResult    $callResult
      * @param string        $indentText
      */
-    private function printHookCallStdOut(OutputPrinter $printer, CallResult $callResult, $indentText)
+    private function printHookCallStdOut(OutputPrinter $printer, CallResult $callResult, $indentText): void
     {
         if (!$callResult->hasStdOut()) {
             return;
         }
 
-        $pad = function ($line) use ($indentText) {
-            return sprintf(
-                '%s│  {+stdout}%s{-stdout}', $indentText, $line
-            );
-        };
+        $pad = (fn ($line): string => sprintf(
+            '%s│  {+stdout}%s{-stdout}',
+            $indentText,
+            $line
+        ));
 
-        $printer->writeln(implode("\n", array_map($pad, explode("\n", $callResult->getStdOut()))));
+        $printer->writeln(implode("\n", array_map($pad, explode("\n", (string) $callResult->getStdOut()))));
         $printer->writeln(sprintf('%s│', $indentText));
     }
 
     /**
      * Prints hook call exception (if has some).
      *
-     * @param OutputPrinter $printer
-     * @param CallResult    $callResult
      * @param string        $indentText
      */
-    private function printHookCallException(OutputPrinter $printer, CallResult $callResult, $indentText)
+    private function printHookCallException(OutputPrinter $printer, CallResult $callResult, $indentText): void
     {
         if (!$callResult->hasException()) {
             return;
         }
 
-        $pad = function ($l) use ($indentText) {
-            return sprintf(
-                '%s╳  {+exception}%s{-exception}', $indentText, $l
-            );
-        };
+        $pad = (fn ($l): string => sprintf(
+            '%s╳  {+exception}%s{-exception}',
+            $indentText,
+            $l
+        ));
 
         $exception = $this->exceptionPresenter->presentException($callResult->getException());
         $printer->writeln(implode("\n", array_map($pad, explode("\n", $exception))));

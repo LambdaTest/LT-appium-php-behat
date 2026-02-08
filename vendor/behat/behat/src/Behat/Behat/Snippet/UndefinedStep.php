@@ -21,42 +21,26 @@ use Behat\Testwork\Environment\Environment;
 final class UndefinedStep
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var StepNode
-     */
-    private $step;
-
-    /**
      * Initializes undefined step.
-     *
-     * @param Environment $environment
-     * @param StepNode    $step
      */
-    public function __construct(Environment $environment, StepNode $step)
-    {
-        $this->environment = $environment;
-        $this->step = $step;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly StepNode $step,
+    ) {
     }
 
     /**
      * Returns environment that needs this step.
-     *
-     * @return Environment
      */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
     /**
      * Returns undefined step node.
-     *
-     * @return StepNode
      */
-    public function getStep()
+    public function getStep(): StepNode
     {
         return $this->step;
     }

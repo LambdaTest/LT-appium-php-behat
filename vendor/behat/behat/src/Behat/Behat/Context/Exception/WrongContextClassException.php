@@ -20,29 +20,19 @@ use InvalidArgumentException;
 final class WrongContextClassException extends InvalidArgumentException implements ContextException
 {
     /**
-     * @var string
-     */
-    private $class;
-
-    /**
      * Initializes exception.
-     *
-     * @param integer $message
-     * @param string  $class
      */
-    public function __construct($message, $class)
-    {
-        $this->class = $class;
-
+    public function __construct(
+        string $message,
+        private readonly string $class,
+    ) {
         parent::__construct($message);
     }
 
     /**
      * Returns not found classname.
-     *
-     * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
         return $this->class;
     }

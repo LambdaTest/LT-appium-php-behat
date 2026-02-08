@@ -10,9 +10,11 @@
 
 namespace Behat\Testwork\Autoloader\ServiceContainer;
 
+use Behat\Testwork\Autoloader\Cli\AutoloaderController;
 use Behat\Testwork\Cli\ServiceContainer\CliExtension;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
+use Composer\Autoload\ClassLoader;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -31,125 +33,95 @@ final class AutoloaderExtension implements Extension
     public const CLASS_LOADER_ID = 'class_loader';
 
     /**
-     * @var array
-     */
-    private $defaultPaths = array();
-
-    /**
      * Initializes extension.
-     *
-     * @param array $defaultPaths
      */
-    public function __construct(array $defaultPaths = array())
-    {
-        $this->defaultPaths = $defaultPaths;
+    public function __construct(
+        private readonly array $defaultPaths = [],
+    ) {
     }
 
     /**
      * Returns the extension config key.
-     *
-     * @return string
      */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'autoload';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
-        $builder
+        $builder = $builder
             ->beforeNormalization()
-                ->ifString()->then(function ($path) {
-                    return array('' => $path);
-                })
+                ->ifString()->then(fn ($path): array => ['' => $path])
             ->end()
 
             ->defaultValue($this->defaultPaths)
             ->treatTrueLike($this->defaultPaths)
-            ->treatNullLike(array())
-            ->treatFalseLike(array())
-
+            ->treatNullLike([])
+            ->treatFalseLike([])
+        ;
+        /** @var ArrayNodeDefinition $builder */
+        $builder
             ->prototype('scalar')->end()
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $this->loadAutoloader($container);
         $this->loadController($container);
         $this->setLoaderPrefixes($container, $config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processLoaderPrefixes($container);
     }
 
     /**
      * Loads Symfony2 autoloader.
-     *
-     * @param ContainerBuilder $container
      */
-    private function loadAutoloader(ContainerBuilder $container)
+    private function loadAutoloader(ContainerBuilder $container): void
     {
-        $definition = new Definition('Composer\Autoload\ClassLoader');
+        $definition = new Definition(ClassLoader::class);
         $container->setDefinition(self::CLASS_LOADER_ID, $definition);
     }
 
     /**
      * Loads controller.
-     *
-     * @param ContainerBuilder $container
      */
-    private function loadController(ContainerBuilder $container)
+    private function loadController(ContainerBuilder $container): void
     {
-        $definition = new Definition('Behat\Testwork\Autoloader\Cli\AutoloaderController', array(
-            new Reference(self::CLASS_LOADER_ID)
-        ));
-        $definition->addTag(CliExtension::CONTROLLER_TAG, array('priority' => 9999));
+        $definition = new Definition(AutoloaderController::class, [
+            new Reference(self::CLASS_LOADER_ID),
+        ]);
+        $definition->addTag(CliExtension::CONTROLLER_TAG, ['priority' => 9999]);
 
         $container->setDefinition(CliExtension::CONTROLLER_TAG . '.autoloader', $definition);
     }
 
     /**
      * Sets provided prefixes to container.
-     *
-     * @param ContainerBuilder $container
-     * @param array            $prefixes
      */
-    private function setLoaderPrefixes(ContainerBuilder $container, array $prefixes)
+    private function setLoaderPrefixes(ContainerBuilder $container, array $prefixes): void
     {
         $container->setParameter('class_loader.prefixes', $prefixes);
     }
 
     /**
      * Processes container loader prefixes.
-     *
-     * @param ContainerBuilder $container
      */
-    private function processLoaderPrefixes(ContainerBuilder $container)
+    private function processLoaderPrefixes(ContainerBuilder $container): void
     {
         $loaderDefinition = $container->getDefinition(self::CLASS_LOADER_ID);
         $prefixes = $container->getParameter('class_loader.prefixes');
 
         foreach ($prefixes as $prefix => $path) {
-            $loaderDefinition->addMethodCall('add', array($prefix, $path));
+            $loaderDefinition->addMethodCall('add', [$prefix, $path]);
         }
     }
 }

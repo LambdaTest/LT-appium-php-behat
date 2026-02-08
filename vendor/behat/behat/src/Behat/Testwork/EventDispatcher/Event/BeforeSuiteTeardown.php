@@ -22,45 +22,27 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class BeforeSuiteTeardown extends SuiteTested implements BeforeTeardown
 {
     /**
-     * @var SpecificationIterator
-     */
-    private $iterator;
-    /**
-     * @var TestResult
-     */
-    private $result;
-
-    /**
      * Initializes event.
      *
-     * @param Environment           $env
-     * @param SpecificationIterator $iterator
-     * @param TestResult            $result
+     * @param SpecificationIterator<mixed> $iterator
      */
-    public function __construct(Environment $env, SpecificationIterator $iterator, TestResult $result)
-    {
+    public function __construct(
+        Environment $env,
+        private readonly SpecificationIterator $iterator,
+        private readonly TestResult $result,
+    ) {
         parent::__construct($env);
-
-        $this->iterator = $iterator;
-        $this->result = $result;
     }
 
-    /**
-     * Returns specification iterator.
-     *
-     * @return SpecificationIterator
-     */
-    public function getSpecificationIterator()
+    public function getSpecificationIterator(): SpecificationIterator
     {
         return $this->iterator;
     }
 
     /**
      * Returns current test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }

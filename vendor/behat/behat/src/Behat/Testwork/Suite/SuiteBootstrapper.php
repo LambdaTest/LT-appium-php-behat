@@ -22,14 +22,12 @@ final class SuiteBootstrapper
     /**
      * @var SuiteSetup[]
      */
-    private $setups = array();
+    private $setups = [];
 
     /**
      * Registers suite setup.
-     *
-     * @param SuiteSetup $setup
      */
-    public function registerSuiteSetup(SuiteSetup $setup)
+    public function registerSuiteSetup(SuiteSetup $setup): void
     {
         $this->setups[] = $setup;
     }
@@ -39,17 +37,15 @@ final class SuiteBootstrapper
      *
      * @param Suite[] $suites
      */
-    public function bootstrapSuites(array $suites)
+    public function bootstrapSuites(array $suites): void
     {
-        array_map(array($this, 'bootstrapSuite'), $suites);
+        array_map($this->bootstrapSuite(...), $suites);
     }
 
     /**
      * Bootstraps provided suite using registered setup.
-     *
-     * @param Suite $suite
      */
-    public function bootstrapSuite(Suite $suite)
+    public function bootstrapSuite(Suite $suite): void
     {
         foreach ($this->setups as $setup) {
             if ($setup->supportsSuite($suite)) {

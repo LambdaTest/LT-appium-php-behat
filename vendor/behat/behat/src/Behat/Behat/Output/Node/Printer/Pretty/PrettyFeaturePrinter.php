@@ -12,7 +12,6 @@ namespace Behat\Behat\Output\Node\Printer\Pretty;
 
 use Behat\Behat\Output\Node\Printer\FeaturePrinter;
 use Behat\Gherkin\Node\FeatureNode;
-use Behat\Gherkin\Node\TaggedNodeInterface;
 use Behat\Testwork\Output\Formatter;
 use Behat\Testwork\Output\Printer\OutputPrinter;
 use Behat\Testwork\Tester\Result\TestResult;
@@ -36,8 +35,8 @@ final class PrettyFeaturePrinter implements FeaturePrinter
     /**
      * Initializes printer.
      *
-     * @param integer $indentation
-     * @param integer $subIndentation
+     * @param int $indentation
+     * @param int $subIndentation
      */
     public function __construct($indentation = 0, $subIndentation = 2)
     {
@@ -45,49 +44,37 @@ final class PrettyFeaturePrinter implements FeaturePrinter
         $this->subIndentText = $this->indentText . str_repeat(' ', intval($subIndentation));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function printHeader(Formatter $formatter, FeatureNode $feature)
+    public function printHeader(Formatter $formatter, FeatureNode $feature): void
     {
-        if ($feature instanceof TaggedNodeInterface) {
-            $this->printTags($formatter->getOutputPrinter(), $feature->getTags());
-        }
+        $this->printTags($formatter->getOutputPrinter(), $feature->getTags());
 
         $this->printTitle($formatter->getOutputPrinter(), $feature);
         $this->printDescription($formatter->getOutputPrinter(), $feature);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function printFooter(Formatter $formatter, TestResult $result)
+    public function printFooter(Formatter $formatter, TestResult $result): void
     {
     }
 
     /**
      * Prints feature tags.
      *
-     * @param OutputPrinter $printer
      * @param string[]      $tags
      */
-    private function printTags(OutputPrinter $printer, array $tags)
+    private function printTags(OutputPrinter $printer, array $tags): void
     {
         if (!count($tags)) {
             return;
         }
 
-        $tags = array_map(array($this, 'prependTagWithTagSign'), $tags);
+        $tags = array_map([$this, 'prependTagWithTagSign'], $tags);
         $printer->writeln(sprintf('%s{+tag}%s{-tag}', $this->indentText, implode(' ', $tags)));
     }
 
     /**
      * Prints feature title using provided printer.
-     *
-     * @param OutputPrinter $printer
-     * @param FeatureNode   $feature
      */
-    private function printTitle(OutputPrinter $printer, FeatureNode $feature)
+    private function printTitle(OutputPrinter $printer, FeatureNode $feature): void
     {
         $printer->write(sprintf('%s{+keyword}%s:{-keyword}', $this->indentText, $feature->getKeyword()));
 
@@ -100,11 +87,8 @@ final class PrettyFeaturePrinter implements FeaturePrinter
 
     /**
      * Prints feature description using provided printer.
-     *
-     * @param OutputPrinter $printer
-     * @param FeatureNode   $feature
      */
-    private function printDescription(OutputPrinter $printer, FeatureNode $feature)
+    private function printDescription(OutputPrinter $printer, FeatureNode $feature): void
     {
         if (!$feature->getDescription()) {
             $printer->writeln();
@@ -123,11 +107,14 @@ final class PrettyFeaturePrinter implements FeaturePrinter
      * Prepends tags string with tag-sign.
      *
      * @param string $tag
-     *
-     * @return string
      */
-    private function prependTagWithTagSign($tag)
+    private function prependTagWithTagSign($tag): string
     {
+        if (str_starts_with($tag, '@')) {
+            return $tag;
+        }
+
+        // The legacy mode of the behat/gherkin parser is trimming the `@` from tags so we need to re-add it for pretty-printing
         return '@' . $tag;
     }
 }

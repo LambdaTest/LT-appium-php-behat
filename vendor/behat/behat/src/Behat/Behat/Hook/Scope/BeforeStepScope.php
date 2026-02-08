@@ -23,38 +23,19 @@ use Behat\Testwork\Suite\Suite;
 final class BeforeStepScope implements StepScope
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var StepNode
-     */
-    private $step;
-
-    /**
      * Initializes scope.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param StepNode    $step
      */
-    public function __construct(Environment $env, FeatureNode $feature, StepNode $step)
-    {
-        $this->environment = $env;
-        $this->feature = $feature;
-        $this->step = $step;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly FeatureNode $feature,
+        private readonly StepNode $step,
+    ) {
     }
 
     /**
      * Returns hook scope name.
-     *
-     * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return self::BEFORE;
     }
@@ -71,30 +52,24 @@ final class BeforeStepScope implements StepScope
 
     /**
      * Returns hook environment.
-     *
-     * @return Environment
      */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
     /**
      * Returns scope feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns scope step.
-     *
-     * @return StepNode
      */
-    public function getStep()
+    public function getStep(): StepNode
     {
         return $this->step;
     }

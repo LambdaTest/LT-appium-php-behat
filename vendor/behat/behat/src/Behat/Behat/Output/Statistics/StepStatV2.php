@@ -10,102 +10,59 @@
 
 namespace Behat\Behat\Output\Statistics;
 
+use Behat\Behat\Tester\Result\StepResult;
+use Stringable;
+
 /**
  * Second iteration of Behat step stat, with a scenario information.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class StepStatV2 extends StepStat
+final class StepStatV2 extends StepStat implements Stringable
 {
     /**
-     * @var string
+     * @param StepResult::* $resultCode
      */
-    private $scenarioTitle;
-    /**
-     * @var string
-     */
-    private $scenarioPath;
-    /**
-     * @var string
-     */
-    private $stepText;
-    /**
-     * @var string
-     */
-    private $stepPath;
-    /**
-     * @var integer
-     */
-    private $resultCode;
-    /**
-     * @var null|string
-     */
-    private $error;
-    /**
-     * @var null|string
-     */
-    private $stdOut;
-
-    /**
-     * Initializes step stat.
-     *
-     * @param string      $scenarioTitle
-     * @param string      $scenarioPath
-     * @param string      $stepText
-     * @param string      $stepPath
-     * @param integer     $resultCode
-     * @param null|string $error
-     * @param null|string $stdOut
-     */
-    public function __construct($scenarioTitle, $scenarioPath, $stepText, $stepPath, $resultCode, $error = null, $stdOut = null)
-    {
+    public function __construct(
+        private readonly string $scenarioTitle,
+        private readonly string $scenarioPath,
+        private readonly string $stepText,
+        private readonly string $stepPath,
+        private readonly int $resultCode,
+        private readonly ?string $error = null,
+        private readonly ?string $stdOut = null,
+    ) {
         parent::__construct($stepText, $stepPath, $resultCode, $error, $stdOut);
-
-        $this->scenarioTitle = $scenarioTitle;
-        $this->scenarioPath = $scenarioPath;
-        $this->stepText = $stepText;
-        $this->stepPath = $stepPath;
-        $this->resultCode = $resultCode;
-        $this->error = $error;
-        $this->stdOut = $stdOut;
     }
 
     /**
      * Returns associated scenario text.
-     *
-     * @return string
      */
-    public function getScenarioText()
+    public function getScenarioText(): string
     {
         return $this->scenarioTitle;
     }
 
     /**
      * Returns associated scenario path.
-     *
-     * @return string
      */
-    public function getScenarioPath()
+    public function getScenarioPath(): string
     {
         return $this->scenarioPath;
     }
 
     /**
      * Returns step text.
-     *
-     * @return string
      */
-    public function getStepText()
+    public function getStepText(): string
     {
         return $this->stepText;
     }
 
     /**
      * Returns step path.
-     *
-     * @return string
      */
-    public function getStepPath()
+    public function getStepPath(): string
     {
         return $this->stepPath;
     }
@@ -113,29 +70,25 @@ final class StepStatV2 extends StepStat
     /**
      * Returns step result code.
      *
-     * @return integer
+     * @return StepResult::*
      */
-    public function getResultCode()
+    public function getResultCode(): int
     {
         return $this->resultCode;
     }
 
     /**
      * Returns step error (if has one).
-     *
-     * @return null|string
      */
-    public function getError()
+    public function getError(): ?string
     {
         return $this->error;
     }
 
     /**
      * Returns step output (if has one).
-     *
-     * @return null|string
      */
-    public function getStdOut()
+    public function getStdOut(): ?string
     {
         return $this->stdOut;
     }

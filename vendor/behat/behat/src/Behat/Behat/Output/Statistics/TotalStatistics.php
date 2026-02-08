@@ -32,33 +32,33 @@ final class TotalStatistics implements Statistics
      */
     private $memory;
     /**
-     * @var array
+     * @var array<TestResult::*, int>
      */
-    private $scenarioCounters = array();
+    private $scenarioCounters = [];
     /**
-     * @var array
+     * @var array<StepResult::*, int>
      */
-    private $stepCounters = array();
-    /**
-     * @var ScenarioStat[]
-     */
-    private $failedScenarioStats = array();
+    private $stepCounters = [];
     /**
      * @var ScenarioStat[]
      */
-    private $skippedScenarioStats = array();
+    private $failedScenarioStats = [];
+    /**
+     * @var ScenarioStat[]
+     */
+    private $skippedScenarioStats = [];
     /**
      * @var StepStat[]
      */
-    private $failedStepStats = array();
+    private $failedStepStats = [];
     /**
      * @var StepStat[]
      */
-    private $pendingStepStats = array();
+    private $pendingStepStats = [];
     /**
      * @var HookStat[]
      */
-    private $failedHookStats = array();
+    private $failedHookStats = [];
 
     /**
      * Initializes statistics.
@@ -71,21 +71,21 @@ final class TotalStatistics implements Statistics
         $this->memory = new Memory();
     }
 
-    public function resetAllCounters()
+    public function resetAllCounters(): void
     {
-        $this->scenarioCounters = $this->stepCounters = array(
-            TestResult::PASSED    => 0,
-            TestResult::FAILED    => 0,
-            StepResult::UNDEFINED => 0,
-            TestResult::PENDING   => 0,
-            TestResult::SKIPPED   => 0
-        );
+        $this->scenarioCounters = $this->stepCounters = [
+            TestResult::PASSED => 0,
+            TestResult::FAILED => 0,
+            TestResult::UNDEFINED => 0,
+            TestResult::PENDING => 0,
+            TestResult::SKIPPED => 0,
+        ];
     }
 
     /**
      * Starts timer.
      */
-    public function startTimer()
+    public function startTimer(): void
     {
         $this->timer->start();
     }
@@ -93,7 +93,7 @@ final class TotalStatistics implements Statistics
     /**
      * Stops timer.
      */
-    public function stopTimer()
+    public function stopTimer(): void
     {
         $this->timer->stop();
     }
@@ -120,16 +120,14 @@ final class TotalStatistics implements Statistics
 
     /**
      * Registers scenario stat.
-     *
-     * @param ScenarioStat $stat
      */
-    public function registerScenarioStat(ScenarioStat $stat)
+    public function registerScenarioStat(ScenarioStat $stat): void
     {
         if (TestResults::NO_TESTS === $stat->getResultCode()) {
             return;
         }
 
-        $this->scenarioCounters[$stat->getResultCode()]++;
+        ++$this->scenarioCounters[$stat->getResultCode()];
 
         if (TestResult::FAILED === $stat->getResultCode()) {
             $this->failedScenarioStats[] = $stat;
@@ -142,12 +140,10 @@ final class TotalStatistics implements Statistics
 
     /**
      * Registers step stat.
-     *
-     * @param StepStat $stat
      */
-    public function registerStepStat(StepStat $stat)
+    public function registerStepStat(StepStat $stat): void
     {
-        $this->stepCounters[$stat->getResultCode()]++;
+        ++$this->stepCounters[$stat->getResultCode()];
 
         if (TestResult::FAILED === $stat->getResultCode()) {
             $this->failedStepStats[] = $stat;
@@ -160,10 +156,8 @@ final class TotalStatistics implements Statistics
 
     /**
      * Registers hook stat.
-     *
-     * @param HookStat $stat
      */
-    public function registerHookStat(HookStat $stat)
+    public function registerHookStat(HookStat $stat): void
     {
         if ($stat->isSuccessful()) {
             return;
@@ -175,9 +169,9 @@ final class TotalStatistics implements Statistics
     /**
      * Returns counters for different scenario result codes.
      *
-     * @return array[]
+     * @return array<TestResult::*, int>
      */
-    public function getScenarioStatCounts()
+    public function getScenarioStatCounts(): array
     {
         return $this->scenarioCounters;
     }
@@ -205,7 +199,7 @@ final class TotalStatistics implements Statistics
     /**
      * Returns counters for different step result codes.
      *
-     * @return array[]
+     * @return array<StepResult::*, int>
      */
     public function getStepStatCounts()
     {

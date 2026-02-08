@@ -23,45 +23,28 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class BeforeFeatureTeardown extends FeatureTested implements BeforeTeardown
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var TestResult
-     */
-    private $result;
-
-    /**
      * Initializes event.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param TestResult  $result
      */
-    public function __construct(Environment $env, FeatureNode $feature, TestResult $result)
-    {
+    public function __construct(
+        Environment $env,
+        private readonly FeatureNode $feature,
+        private readonly TestResult $result,
+    ) {
         parent::__construct($env);
-
-        $this->feature = $feature;
-        $this->result = $result;
     }
 
     /**
      * Returns feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns current test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }

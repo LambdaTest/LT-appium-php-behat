@@ -21,42 +21,28 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class BeforeExerciseTeardown extends ExerciseCompleted implements BeforeTeardown
 {
     /**
-     * @var SpecificationIterator[]
-     */
-    private $specificationIterators;
-    /**
-     * @var TestResult
-     */
-    private $result;
-
-    /**
      * Initializes event.
      *
-     * @param SpecificationIterator[] $specificationIterators
-     * @param TestResult              $result
+     * @param SpecificationIterator<mixed>[] $specificationIterators
      */
-    public function __construct(array $specificationIterators, TestResult $result)
-    {
-        $this->specificationIterators = $specificationIterators;
-        $this->result = $result;
+    public function __construct(
+        private readonly array $specificationIterators,
+        private readonly TestResult $result,
+    ) {
     }
 
     /**
-     * Returns specification iterators.
-     *
      * @return SpecificationIterator[]
      */
-    public function getSpecificationIterators()
+    public function getSpecificationIterators(): array
     {
         return $this->specificationIterators;
     }
 
     /**
      * Returns exercise test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }

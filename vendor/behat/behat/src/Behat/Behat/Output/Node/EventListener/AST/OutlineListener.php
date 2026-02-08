@@ -33,58 +33,18 @@ use Behat\Testwork\Output\Node\EventListener\EventListener;
  */
 final class OutlineListener implements EventListener
 {
-    /**
-     * @var OutlinePrinter
-     */
-    private $outlinePrinter;
-    /**
-     * @var ExamplePrinter
-     */
-    private $examplePrinter;
-    /**
-     * @var StepPrinter
-     */
-    private $stepPrinter;
-    /**
-     * @var SetupPrinter
-     */
-    private $stepSetupPrinter;
-    /**
-     * @var SetupPrinter
-     */
-    private $exampleSetupPrinter;
-    /**
-     * @var ExampleNode
-     */
-    private $example;
+    private ?ExampleNode $example = null;
 
-    /**
-     * Initializes listener.
-     *
-     * @param OutlinePrinter $outlinePrinter
-     * @param ExamplePrinter $examplePrinter
-     * @param StepPrinter    $stepPrinter
-     * @param SetupPrinter   $exampleSetupPrinter
-     * @param SetupPrinter   $stepSetupPrinter
-     */
     public function __construct(
-        OutlinePrinter $outlinePrinter,
-        ExamplePrinter $examplePrinter,
-        StepPrinter $stepPrinter,
-        SetupPrinter $exampleSetupPrinter,
-        SetupPrinter $stepSetupPrinter
+        private readonly OutlinePrinter $outlinePrinter,
+        private readonly ExamplePrinter $examplePrinter,
+        private readonly StepPrinter $stepPrinter,
+        private readonly SetupPrinter $exampleSetupPrinter,
+        private readonly SetupPrinter $stepSetupPrinter,
     ) {
-        $this->outlinePrinter = $outlinePrinter;
-        $this->examplePrinter = $examplePrinter;
-        $this->stepPrinter = $stepPrinter;
-        $this->exampleSetupPrinter = $exampleSetupPrinter;
-        $this->stepSetupPrinter = $stepSetupPrinter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function listenEvent(Formatter $formatter, Event $event, $eventName)
+    public function listenEvent(Formatter $formatter, Event $event, $eventName): void
     {
         $this->printAndCaptureOutlineHeaderOnBeforeEvent($formatter, $event);
         $this->printAndForgetOutlineFooterOnAfterEvent($formatter, $event);
@@ -96,11 +56,8 @@ final class OutlineListener implements EventListener
 
     /**
      * Prints outline header and captures outline into ivar on BEFORE event.
-     *
-     * @param Formatter $formatter
-     * @param Event     $event
      */
-    private function printAndCaptureOutlineHeaderOnBeforeEvent(Formatter $formatter, Event $event)
+    private function printAndCaptureOutlineHeaderOnBeforeEvent(Formatter $formatter, Event $event): void
     {
         if (!$event instanceof BeforeOutlineTested) {
             return;
@@ -111,11 +68,8 @@ final class OutlineListener implements EventListener
 
     /**
      * Prints outline footer and removes outline from ivar on AFTER event.
-     *
-     * @param Formatter $formatter
-     * @param Event     $event
      */
-    private function printAndForgetOutlineFooterOnAfterEvent(Formatter $formatter, Event $event)
+    private function printAndForgetOutlineFooterOnAfterEvent(Formatter $formatter, Event $event): void
     {
         if (!$event instanceof AfterOutlineTested) {
             return;
@@ -126,30 +80,27 @@ final class OutlineListener implements EventListener
 
     /**
      * Prints example header on example BEFORE event.
-     *
-     * @param Formatter $formatter
-     * @param Event     $event
      */
-    private function printExampleHeaderOnBeforeExampleEvent(Formatter $formatter, Event $event)
+    private function printExampleHeaderOnBeforeExampleEvent(Formatter $formatter, Event $event): void
     {
         if (!$event instanceof AfterScenarioSetup) {
             return;
         }
 
-        $this->example = $event->getScenario();
-
         $this->exampleSetupPrinter->printSetup($formatter, $event->getSetup());
+
+        $scenario = $event->getScenario();
+        assert($scenario instanceof ExampleNode);
+        $this->example = $scenario;
         $this->examplePrinter->printHeader($formatter, $event->getFeature(), $this->example);
     }
 
     /**
      * Prints example footer on example AFTER event.
      *
-     * @param Formatter $formatter
-     * @param Event     $event
      * @param string    $eventName
      */
-    private function printExampleFooterOnAfterExampleEvent(Formatter $formatter, Event $event, $eventName)
+    private function printExampleFooterOnAfterExampleEvent(Formatter $formatter, Event $event, $eventName): void
     {
         if (!$event instanceof AfterScenarioTested || ExampleTested::AFTER !== $eventName) {
             return;
@@ -163,11 +114,8 @@ final class OutlineListener implements EventListener
 
     /**
      * Prints step setup on step BEFORE event.
-     *
-     * @param Formatter $formatter
-     * @param Event     $event
      */
-    private function printStepSetupOnBeforeStepEvent(Formatter $formatter, Event $event)
+    private function printStepSetupOnBeforeStepEvent(Formatter $formatter, Event $event): void
     {
         if (!$event instanceof AfterStepSetup) {
             return;
@@ -178,11 +126,8 @@ final class OutlineListener implements EventListener
 
     /**
      * Prints example step on step AFTER event.
-     *
-     * @param Formatter $formatter
-     * @param Event     $event
      */
-    private function printStepOnAfterStepEvent(Formatter $formatter, Event $event)
+    private function printStepOnAfterStepEvent(Formatter $formatter, Event $event): void
     {
         if (!$event instanceof AfterStepTested) {
             return;

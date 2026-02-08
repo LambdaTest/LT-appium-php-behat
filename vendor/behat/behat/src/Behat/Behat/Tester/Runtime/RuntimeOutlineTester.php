@@ -19,8 +19,10 @@ use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 
 /**
  * Tester executing outline tests in the runtime.
@@ -30,34 +32,21 @@ use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
 final class RuntimeOutlineTester implements OutlineTester
 {
     /**
-     * @var ScenarioTester
-     */
-    private $scenarioTester;
-
-    /**
      * Initializes tester.
-     *
-     * @param ScenarioTester $scenarioTester
      */
-    public function __construct(ScenarioTester $scenarioTester)
-    {
-        $this->scenarioTester = $scenarioTester;
+    public function __construct(
+        private readonly ScenarioTester $scenarioTester,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip)
+    public function setUp(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip = false)
+    public function test(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip = false): TestResult
     {
-        $results = array();
+        $results = [];
         foreach ($outline->getExamples() as $example) {
             $setup = $this->scenarioTester->setUp($env, $feature, $example, $skip);
             $localSkip = !$setup->isSuccessful() || $skip;
@@ -71,10 +60,7 @@ final class RuntimeOutlineTester implements OutlineTester
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip, TestResult $result)
+    public function tearDown(Environment $env, FeatureNode $feature, OutlineNode $outline, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

@@ -21,48 +21,32 @@ use Behat\Testwork\Tester\Result\ExceptionResult;
 final class FailedStepSearchResult implements StepResult, ExceptionResult
 {
     /**
-     * @var SearchException
-     */
-    private $searchException;
-
-    /**
      * Initializes result.
-     *
-     * @param SearchException $searchException
      */
-    public function __construct(SearchException $searchException)
-    {
-        $this->searchException = $searchException;
+    public function __construct(
+        private readonly SearchException $searchException,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasException()
+    public function hasException(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getException()
+    public function getException(): SearchException
     {
         return $this->searchException;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isPassed()
+    public function isPassed(): bool
     {
         return false;
     }
 
     /**
-     * {@inheritdoc}
+     * @return self::FAILED
      */
-    public function getResultCode()
+    public function getResultCode(): int
     {
         return self::FAILED;
     }

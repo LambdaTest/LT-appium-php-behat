@@ -20,58 +20,39 @@ use Behat\Testwork\Environment\Environment;
  * Enhances environment call with definition information.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @method Definition getCallee()
  */
 final class DefinitionCall extends EnvironmentCall
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var StepNode
-     */
-    private $step;
-
-    /**
      * Initializes definition call.
      *
-     * @param Environment  $environment
-     * @param FeatureNode  $feature
-     * @param StepNode     $step
-     * @param Definition   $definition
-     * @param array        $arguments
-     * @param null|integer $errorReportingLevel
+     * @param int|null $errorReportingLevel
      */
     public function __construct(
         Environment $environment,
-        FeatureNode $feature,
-        StepNode $step,
+        private readonly FeatureNode $feature,
+        private readonly StepNode $step,
         Definition $definition,
         array $arguments,
-        $errorReportingLevel = null
+        $errorReportingLevel = null,
     ) {
         parent::__construct($environment, $definition, $arguments, $errorReportingLevel);
-
-        $this->feature = $feature;
-        $this->step = $step;
     }
 
     /**
      * Returns step feature node.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns definition step node.
-     *
-     * @return StepNode
      */
-    public function getStep()
+    public function getStep(): StepNode
     {
         return $this->step;
     }

@@ -10,9 +10,12 @@
 
 namespace Behat\Behat\Definition\Pattern\Policy;
 
-use Behat\Behat\Definition\Pattern\Pattern;
 use Behat\Behat\Definition\Exception\InvalidPatternException;
-use Behat\Transliterator\Transliterator;
+use Behat\Behat\Definition\Pattern\Pattern;
+use Behat\Behat\Definition\Pattern\SimpleStepMethodNameSuggester;
+use Behat\Behat\Definition\Pattern\StepMethodNameSuggester;
+
+use function preg_replace;
 
 /**
  * Defines a way to handle turnip patterns.
@@ -30,29 +33,28 @@ final class TurnipPatternPolicy implements PatternPolicy
     /**
      * @var string[]
      */
-    private $regexCache = array();
+    private $regexCache = [];
 
     /**
      * @var string[]
      */
-    private static $placeholderPatterns = array(
+    private static $placeholderPatterns = [
         "/(?<!\w)\"[^\"]+\"(?!\w)/",
         "/(?<!\w)'[^']+'(?!\w)/",
-        "/(?<!\w|\.|\,)\-?\d+(?:[\.\,]\d+)?(?!\w|\.|\,)/"
-    );
+        "/(?<!\w|\.|\,)\-?\d+(?:[\.\,]\d+)?(?!\w|\.|\,)/",
+    ];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsPatternType($type)
+    public function __construct(
+        private readonly StepMethodNameSuggester $methodNameSuggester = new SimpleStepMethodNameSuggester(),
+    ) {
+    }
+
+    public function supportsPatternType($type): bool
     {
         return null === $type || 'turnip' === $type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function generatePattern($stepText)
+    public function generatePattern($stepText): Pattern
     {
         $count = 0;
         $pattern = $stepText;
@@ -60,39 +62,35 @@ final class TurnipPatternPolicy implements PatternPolicy
             $pattern = preg_replace_callback(
                 $replacePattern,
                 function () use (&$count) { return ':arg' . ++$count; },
-                $pattern
+                (string) $pattern
             );
         }
         $pattern = $this->escapeAlternationSyntax($pattern);
-        $canonicalText = $this->generateCanonicalText($stepText);
+        $methodName = $this->methodNameSuggester->suggest(
+            preg_replace(self::$placeholderPatterns, '', $stepText),
+        );
 
-        return new Pattern($canonicalText, $pattern, $count);
+        return new Pattern($methodName, $pattern, $count);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsPattern($pattern)
+    public function supportsPattern($pattern): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transformPatternToRegex($pattern)
     {
         if (!isset($this->regexCache[$pattern])) {
             $this->regexCache[$pattern] = $this->createTransformedRegex($pattern);
         }
+
         return $this->regexCache[$pattern];
     }
 
     /**
      * @param string $pattern
-     * @return string
      */
-    private function createTransformedRegex($pattern)
+    private function createTransformedRegex($pattern): string
     {
         $regex = preg_quote($pattern, '/');
 
@@ -101,23 +99,6 @@ final class TurnipPatternPolicy implements PatternPolicy
         $regex = $this->replaceTurnipAlternativeWordsWithRegex($regex);
 
         return '/^' . $regex . '$/iu';
-    }
-
-    /**
-     * Generates canonical text for step text.
-     *
-     * @param string $stepText
-     *
-     * @return string
-     */
-    private function generateCanonicalText($stepText)
-    {
-        $canonicalText = preg_replace(self::$placeholderPatterns, '', $stepText);
-        $canonicalText = Transliterator::transliterate($canonicalText, ' ');
-        $canonicalText = preg_replace('/[^a-zA-Z\_\ ]/', '', $canonicalText);
-        $canonicalText = str_replace(' ', '', ucwords($canonicalText));
-
-        return $canonicalText;
     }
 
     /**
@@ -133,14 +114,14 @@ final class TurnipPatternPolicy implements PatternPolicy
 
         return preg_replace_callback(
             self::PLACEHOLDER_REGEXP,
-            array($this, 'replaceTokenWithRegexCaptureGroup'),
+            [$this, 'replaceTokenWithRegexCaptureGroup'],
             $regex
         );
     }
 
-    private function replaceTokenWithRegexCaptureGroup($tokenMatch)
+    private function replaceTokenWithRegexCaptureGroup($tokenMatch): string
     {
-        if (strlen($tokenMatch[1]) >= 32) {
+        if (strlen((string) $tokenMatch[1]) > 32) {
             throw new InvalidPatternException(
                 "Token name should not exceed 32 characters, but `{$tokenMatch[1]}` was used."
             );
@@ -165,10 +146,8 @@ final class TurnipPatternPolicy implements PatternPolicy
      * Replaces turnip alternative words with regex non-capturing alternating group.
      *
      * @param string $regex
-     *
-     * @return string
      */
-    private function replaceTurnipAlternativeWordsWithRegex($regex)
+    private function replaceTurnipAlternativeWordsWithRegex($regex): string
     {
         $regex = preg_replace(self::ALTERNATIVE_WORD_REGEXP, '(?:\1|\2)', $regex);
         $regex = $this->removeEscapingOfAlternationSyntax($regex);
@@ -187,10 +166,8 @@ final class TurnipPatternPolicy implements PatternPolicy
      * This method adds escaping to all slashes in generated snippets.
      *
      * @param string $pattern
-     *
-     * @return string
      */
-    private function escapeAlternationSyntax($pattern)
+    private function escapeAlternationSyntax($pattern): string
     {
         return str_replace('/', '\/', $pattern);
     }
@@ -202,10 +179,8 @@ final class TurnipPatternPolicy implements PatternPolicy
      * could be matched against your escaped definitions.
      *
      * @param string $regex
-     *
-     * @return string
      */
-    private function removeEscapingOfAlternationSyntax($regex)
+    private function removeEscapingOfAlternationSyntax($regex): string
     {
         return str_replace('\\\/', '/', $regex);
     }

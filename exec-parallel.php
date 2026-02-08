@@ -4,32 +4,34 @@
 require 'vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 
+$config_file = null;
 
-$config_file = getenv('CONFIG_FILE');
-if(in_array('-c', $argv)){
+if (in_array('-c', $argv)) {
     $config_file = $argv[array_search('-c', $argv) + 1];
 }
 
-if(!$config_file) $config_file = 'config/single.conf.yml';
+if (!$config_file) {
+    die("❌ Config file not provided. Use: php exec-parallel.php -c config/parallelios.conf.yml\n");
+}
 
-$CONFIG = Yaml::parse(file_get_contents($config_file))["default"]["suites"]["default"]["contexts"][0]["FeatureContext"]["parameters"];
+$yaml = Yaml::parse(file_get_contents($config_file));
+$CONFIG = $yaml["default"]["suites"]["default"]["contexts"][0]["FeatureContext"]["parameters"];
 
+$procs = [];
 
-$procs = array();
+foreach ($CONFIG['environments'] as $index => $env) {
 
-foreach ($CONFIG['environments'] as $index => $value) {
-    // TEST_RUN_ID=0 ./bin/behat --config=single.conf.yml 2>&1
     putenv("TEST_RUN_ID=$index");
-    $cmd = realpath("./bin/behat") . " --config=" . $config_file . " 2>&1\n";
-    print $value['platformName'] . ", " . $value['browserName'] . ", " . $value['browserVersion'] . "\n";
+
+    $cmd = "php vendor/bin/behat --config=" . $config_file . " 2>&1";
+    echo "🚀 Running on: " . $env['deviceName'] . " (" . $env['platform'] . " " . $env['platformVersion'] . ")\n";
+
     $procs[$index] = popen($cmd, "r");
 }
 
-foreach ($procs as $key => $value) {
-    while (!feof($value)) { 
-        print fgets($value);
+foreach ($procs as $proc) {
+    while (!feof($proc)) {
+        echo fgets($proc);
     }
-    pclose($value);
+    pclose($proc);
 }
-
-?>

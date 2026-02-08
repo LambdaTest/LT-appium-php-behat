@@ -24,11 +24,10 @@ final class WidthCalculator
     /**
      * Calculates scenario width.
      *
-     * @param Scenario $scenario
-     * @param integer  $indentation
-     * @param integer  $subIndentation
+     * @param int $indentation
+     * @param int $subIndentation
      *
-     * @return integer
+     * @return int
      */
     public function calculateScenarioWidth(Scenario $scenario, $indentation, $subIndentation)
     {
@@ -45,11 +44,10 @@ final class WidthCalculator
     /**
      * Calculates outline examples width.
      *
-     * @param ExampleNode $example
-     * @param integer     $indentation
-     * @param integer     $subIndentation
+     * @param int $indentation
+     * @param int $subIndentation
      *
-     * @return integer
+     * @return int
      */
     public function calculateExampleWidth(ExampleNode $example, $indentation, $subIndentation)
     {
@@ -66,12 +64,9 @@ final class WidthCalculator
     /**
      * Calculates scenario header width.
      *
-     * @param Scenario $scenario
-     * @param integer  $indentation
-     *
-     * @return integer
+     * @param int $indentation
      */
-    public function calculateScenarioHeaderWidth(Scenario $scenario, $indentation)
+    public function calculateScenarioHeaderWidth(Scenario $scenario, $indentation): int
     {
         $indentText = str_repeat(' ', intval($indentation));
 
@@ -89,12 +84,9 @@ final class WidthCalculator
     /**
      * Calculates step width.
      *
-     * @param StepNode $step
-     * @param integer  $indentation
-     *
-     * @return integer
+     * @param int $indentation
      */
-    public function calculateStepWidth(StepNode $step, $indentation)
+    public function calculateStepWidth(StepNode $step, $indentation): int
     {
         $indentText = str_repeat(' ', intval($indentation));
 

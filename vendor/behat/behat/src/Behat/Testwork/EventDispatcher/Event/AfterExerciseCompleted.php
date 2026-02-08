@@ -22,58 +22,37 @@ use Behat\Testwork\Tester\Setup\Teardown;
 final class AfterExerciseCompleted extends ExerciseCompleted implements AfterTested
 {
     /**
-     * @var SpecificationIterator[]
-     */
-    private $specificationIterators;
-    /**
-     * @var TestResult
-     */
-    private $result;
-    /**
-     * @var Teardown
-     */
-    private $teardown;
-
-    /**
      * Initializes event.
      *
-     * @param SpecificationIterator[] $specificationIterators
-     * @param TestResult              $result
-     * @param Teardown                $teardown
+     * @param SpecificationIterator<mixed>[] $specificationIterators
      */
-    public function __construct(array $specificationIterators, TestResult $result, Teardown $teardown)
-    {
-        $this->specificationIterators = $specificationIterators;
-        $this->result = $result;
-        $this->teardown = $teardown;
+    public function __construct(
+        private readonly array $specificationIterators,
+        private readonly TestResult $result,
+        private readonly Teardown $teardown,
+    ) {
     }
 
     /**
-     * Returns specification iterators.
-     *
      * @return SpecificationIterator[]
      */
-    public function getSpecificationIterators()
+    public function getSpecificationIterators(): array
     {
         return $this->specificationIterators;
     }
 
     /**
      * Returns exercise test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }
 
     /**
      * Returns exercise teardown result.
-     *
-     * @return Teardown
      */
-    public function getTeardown()
+    public function getTeardown(): Teardown
     {
         return $this->teardown;
     }

@@ -10,7 +10,6 @@
 
 namespace Behat\Behat\Output\Node\Printer\Helper;
 
-use Behat\Behat\Tester\Result\StepResult;
 use Behat\Testwork\Tester\Result\TestResult;
 
 /**
@@ -22,12 +21,8 @@ final class ResultToStringConverter
 {
     /**
      * Converts provided test result to a string.
-     *
-     * @param TestResult $result
-     *
-     * @return string
      */
-    public function convertResultToString(TestResult $result)
+    public function convertResultToString(TestResult $result): string
     {
         return $this->convertResultCodeToString($result->getResultCode());
     }
@@ -35,23 +30,16 @@ final class ResultToStringConverter
     /**
      * Converts provided result code to a string.
      *
-     * @param integer $resultCode
-     *
-     * @return string
+     * @param int $resultCode
      */
-    public function convertResultCodeToString($resultCode)
+    public function convertResultCodeToString($resultCode): string
     {
-        switch ($resultCode) {
-            case TestResult::SKIPPED:
-                return 'skipped';
-            case TestResult::PENDING:
-                return 'pending';
-            case TestResult::FAILED:
-                return 'failed';
-            case StepResult::UNDEFINED:
-                return 'undefined';
-        }
-
-        return 'passed';
+        return match ($resultCode) {
+            TestResult::SKIPPED => 'skipped',
+            TestResult::PENDING => 'pending',
+            TestResult::FAILED => 'failed',
+            TestResult::UNDEFINED => 'undefined',
+            default => 'passed',
+        };
     }
 }

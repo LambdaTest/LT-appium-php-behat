@@ -2,6 +2,10 @@
 
 require 'vendor/autoload.php';
 
+use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Facebook\WebDriver\Remote\DesiredCapabilities;
+use Facebook\WebDriver\WebDriverBy;
+
 class LambdaContext implements Behat\Behat\Context\Context
 {
     protected static $CONFIG;
@@ -48,7 +52,7 @@ class LambdaContext implements Behat\Behat\Context\Context
     public static function tearDown()
     {
         if(self::$driver)
-        self::$driver->quit();
+            self::$driver->quit();
     }
 }
 ?>

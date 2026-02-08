@@ -24,10 +24,6 @@ use Exception;
 final class RuntimeCallHandler implements CallHandler
 {
     /**
-     * @var integer
-     */
-    private $errorReportingLevel;
-    /**
      * @var bool
      */
     private $obStarted = false;
@@ -36,28 +32,24 @@ final class RuntimeCallHandler implements CallHandler
      */
     private $validator;
 
+    private ?int $previousErrorReporting = null;
+
     /**
      * Initializes executor.
      *
-     * @param integer $errorReportingLevel
+     * @param int $errorReportingLevel
      */
-    public function __construct($errorReportingLevel = E_ALL)
-    {
-        $this->errorReportingLevel = $errorReportingLevel;
+    public function __construct(
+        private $errorReportingLevel = E_ALL,
+    ) {
         $this->validator = new Validator();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsCall(Call $call)
+    public function supportsCall(Call $call): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handleCall(Call $call)
     {
         $this->startErrorAndOutputBuffering($call);
@@ -72,16 +64,14 @@ final class RuntimeCallHandler implements CallHandler
      *
      * @see set_error_handler()
      *
-     * @param integer $level
-     * @param string  $message
-     * @param string  $file
-     * @param integer $line
-     *
-     * @return bool
+     * @param int    $level
+     * @param string $message
+     * @param string $file
+     * @param int    $line
      *
      * @throws CallErrorException
      */
-    public function handleError($level, $message, $file, $line)
+    public function handleError($level, $message, $file, $line): bool
     {
         if ($this->errorLevelIsNotReportable($level)) {
             return false;
@@ -92,12 +82,8 @@ final class RuntimeCallHandler implements CallHandler
 
     /**
      * Executes single call.
-     *
-     * @param Call $call
-     *
-     * @return CallResult
      */
-    private function executeCall(Call $call)
+    private function executeCall(Call $call): CallResult
     {
         $reflection = $call->getCallee()->getReflection();
         $callable = $call->getBoundCallable();
@@ -120,7 +106,7 @@ final class RuntimeCallHandler implements CallHandler
     /**
      * Returns buffered stdout.
      *
-     * @return null|string
+     * @return string|null
      */
     private function getBufferedStdOut()
     {
@@ -129,35 +115,36 @@ final class RuntimeCallHandler implements CallHandler
 
     /**
      * Starts error handler and stdout buffering.
-     *
-     * @param Call $call
      */
-    private function startErrorAndOutputBuffering(Call $call)
+    private function startErrorAndOutputBuffering(Call $call): void
     {
-        $errorReporting = $call->getErrorReportingLevel() ? : $this->errorReportingLevel;
-        set_error_handler(array($this, 'handleError'), $errorReporting);
+        $errorReporting = $call->getErrorReportingLevel() ?: $this->errorReportingLevel;
+        $this->previousErrorReporting = error_reporting($errorReporting);
+        set_error_handler($this->handleError(...), $errorReporting);
         $this->obStarted = ob_start();
     }
 
     /**
      * Stops error handler and stdout buffering.
      */
-    private function stopErrorAndOutputBuffering()
+    private function stopErrorAndOutputBuffering(): void
     {
         if ($this->obStarted) {
             ob_end_clean();
         }
         restore_error_handler();
+        if (null !== $this->previousErrorReporting) {
+            error_reporting($this->previousErrorReporting);
+            $this->previousErrorReporting = null;
+        }
     }
 
     /**
      * Checks if provided error level is not reportable.
      *
-     * @param integer $level
-     *
-     * @return bool
+     * @param int $level
      */
-    private function errorLevelIsNotReportable($level)
+    private function errorLevelIsNotReportable($level): bool
     {
         return !(error_reporting() & $level);
     }

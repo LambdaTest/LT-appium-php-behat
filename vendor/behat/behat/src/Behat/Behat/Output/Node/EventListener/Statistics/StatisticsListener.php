@@ -25,30 +25,15 @@ use Behat\Testwork\Output\Node\EventListener\EventListener;
 final class StatisticsListener implements EventListener
 {
     /**
-     * @var Statistics
-     */
-    private $statistics;
-    /**
-     * @var StatisticsPrinter
-     */
-    private $printer;
-
-    /**
      * Initializes listener.
-     *
-     * @param Statistics        $statistics
-     * @param StatisticsPrinter $statisticsPrinter
      */
-    public function __construct(Statistics $statistics, StatisticsPrinter $statisticsPrinter)
-    {
-        $this->statistics = $statistics;
-        $this->printer = $statisticsPrinter;
+    public function __construct(
+        private readonly Statistics $statistics,
+        private readonly StatisticsPrinter $printer,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function listenEvent(Formatter $formatter, Event $event, $eventName)
+    public function listenEvent(Formatter $formatter, Event $event, $eventName): void
     {
         $this->startTimerOnBeforeExercise($eventName);
         $this->printStatisticsOnAfterExerciseEvent($formatter, $eventName);
@@ -59,7 +44,7 @@ final class StatisticsListener implements EventListener
      *
      * @param string $eventName
      */
-    private function startTimerOnBeforeExercise($eventName)
+    private function startTimerOnBeforeExercise($eventName): void
     {
         if (ExerciseCompleted::BEFORE !== $eventName) {
             return;
@@ -71,10 +56,9 @@ final class StatisticsListener implements EventListener
     /**
      * Prints statistics on after exercise event.
      *
-     * @param Formatter $formatter
      * @param string    $eventName
      */
-    private function printStatisticsOnAfterExerciseEvent(Formatter $formatter, $eventName)
+    private function printStatisticsOnAfterExerciseEvent(Formatter $formatter, $eventName): void
     {
         if (ExerciseCompleted::AFTER !== $eventName) {
             return;

@@ -12,6 +12,7 @@ namespace Behat\Testwork\Call\Exception;
 
 use ErrorException;
 use ParseError;
+use ReflectionProperty;
 use Throwable;
 use TypeError;
 
@@ -25,13 +26,13 @@ class FatalThrowableError extends ErrorException
     public function __construct(Throwable $e)
     {
         if ($e instanceof ParseError) {
-            $message = 'Parse error: '.$e->getMessage();
+            $message = 'Parse error: ' . $e->getMessage();
             $severity = E_PARSE;
         } elseif ($e instanceof TypeError) {
-            $message = 'Type error: '.$e->getMessage();
+            $message = 'Type error: ' . $e->getMessage();
             $severity = E_RECOVERABLE_ERROR;
         } else {
-            $message = 'Fatal error: '.$e->getMessage();
+            $message = 'Fatal error: ' . $e->getMessage();
             $severity = E_ERROR;
         }
 
@@ -46,10 +47,9 @@ class FatalThrowableError extends ErrorException
         $this->setTrace($e->getTrace());
     }
 
-    private function setTrace($trace)
+    private function setTrace($trace): void
     {
-        $traceReflector = new \ReflectionProperty('Exception', 'trace');
-        $traceReflector->setAccessible(true);
+        $traceReflector = new ReflectionProperty('Exception', 'trace');
         $traceReflector->setValue($this, $trace);
     }
 }

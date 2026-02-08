@@ -1,24 +1,25 @@
 {
   "require": {
     "behat/behat": "^3.12",
-    "facebook/webdriver": "dev-master",
-    "appium/php-client": "dev-master",
-    "symfony/yaml": "*",
-    "phpwhois/phpwhois": "^4.2",
-    "php-webdriver/webdriver": "^1.1"
+    "php-webdriver/webdriver": "^1.11",
+    "symfony/yaml": "^6.0"
   },
   "config": {
-      "bin-dir": "bin/"
+    "bin-dir": "vendor/bin",
+    "audit": {
+      "block-insecure": false
+    }
   },
   "scripts": {
-    "test": "composer single  && composer parallel",
-    "androidsingle": "./bin/behat --config=config/androidsingle.conf.yml",
-    "iossingle":"./bin/behat --config=config/iossingle.conf.yml",
-    "parallelandroid": "CONFIG_FILE=config/parallelandroid.conf.yml /usr/bin/env php exec-parallel.php",
-    "parallelios": "CONFIG_FILE=config/parallelios.conf.yml /usr/bin/env php exec-parallel.php"
-
+    "test": "composer androidsingle",
+    "androidsingle": "php vendor/bin/behat --config=config/androidsingle.conf.yml",
+    "iossingle": "php vendor/bin/behat --config=config/iossingle.conf.yml",
+    "androidparallel": "php exec-parallel.php -c config/parallelandroid.conf.yml",
+    "iosparallel": "php exec-parallel.php -c config/parallelios.conf.yml"
   },
   "autoload": {
     "classmap": ["lib/"]
-  }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

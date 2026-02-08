@@ -19,30 +19,23 @@ use EmptyIterator;
  * Return an instance of this class from locator if no specifications are found.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @implements SpecificationIterator<never>
  */
 final class NoSpecificationsIterator extends EmptyIterator implements SpecificationIterator
 {
     /**
-     * @var Suite
-     */
-    private $suite;
-
-    /**
      * Initializes iterator.
-     *
-     * @param Suite $suite
      */
-    public function __construct(Suite $suite)
-    {
-        $this->suite = $suite;
+    public function __construct(
+        private readonly Suite $suite,
+    ) {
     }
 
     /**
      * Returns suite that was used to load subjects.
-     *
-     * @return Suite
      */
-    public function getSuite()
+    public function getSuite(): Suite
     {
         return $this->suite;
     }

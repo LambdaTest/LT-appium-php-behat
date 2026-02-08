@@ -11,8 +11,8 @@
 namespace Behat\Behat\Tester\Runtime;
 
 use Behat\Behat\Tester\BackgroundTester;
-use Behat\Behat\Tester\StepContainerTester;
 use Behat\Behat\Tester\ScenarioTester;
+use Behat\Behat\Tester\StepContainerTester;
 use Behat\Gherkin\Node\FeatureNode;
 use Behat\Gherkin\Node\ScenarioInterface as Scenario;
 use Behat\Testwork\Environment\Environment;
@@ -20,8 +20,10 @@ use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 
 /**
  * Tester executing scenario or example tests in the runtime.
@@ -31,40 +33,22 @@ use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
 final class RuntimeScenarioTester implements ScenarioTester
 {
     /**
-     * @var StepContainerTester
-     */
-    private $containerTester;
-    /**
-     * @var BackgroundTester
-     */
-    private $backgroundTester;
-
-    /**
      * Initializes tester.
-     *
-     * @param StepContainerTester $containerTester
-     * @param BackgroundTester    $backgroundTester
      */
-    public function __construct(StepContainerTester $containerTester, BackgroundTester $backgroundTester)
-    {
-        $this->containerTester = $containerTester;
-        $this->backgroundTester = $backgroundTester;
+    public function __construct(
+        private readonly StepContainerTester $containerTester,
+        private readonly BackgroundTester $backgroundTester,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, FeatureNode $feature, Scenario $example, $skip)
+    public function setUp(Environment $env, FeatureNode $feature, Scenario $scenario, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, FeatureNode $feature, Scenario $scenario, $skip = false)
+    public function test(Environment $env, FeatureNode $feature, Scenario $scenario, $skip = false): TestResult
     {
-        $results = array();
+        $results = [];
 
         if ($feature->hasBackground()) {
             $backgroundResult = $this->testBackground($env, $feature, $skip);
@@ -78,10 +62,7 @@ final class RuntimeScenarioTester implements ScenarioTester
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, FeatureNode $feature, Scenario $scenario, $skip, TestResult $result)
+    public function tearDown(Environment $env, FeatureNode $feature, Scenario $scenario, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }
@@ -89,13 +70,9 @@ final class RuntimeScenarioTester implements ScenarioTester
     /**
      * Tests background of the provided feature against provided environment.
      *
-     * @param Environment $env
-     * @param FeatureNode $feature
      * @param bool     $skip
-     *
-     * @return TestResult
      */
-    private function testBackground(Environment $env, FeatureNode $feature, $skip)
+    private function testBackground(Environment $env, FeatureNode $feature, $skip): TestWithSetupResult
     {
         $setup = $this->backgroundTester->setUp($env, $feature, $skip);
         $skipSetup = !$setup->isSuccessful() || $skip;

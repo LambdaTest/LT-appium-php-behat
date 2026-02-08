@@ -22,41 +22,25 @@ use Behat\Testwork\Suite\Suite;
 final class SuiteWithPathsSetup implements SuiteSetup
 {
     /**
-     * @var string
-     */
-    private $basePath;
-    /**
-     * @var null|FilesystemLogger
-     */
-    private $logger;
-
-    /**
      * Initializes setup.
      *
      * @param string                $basePath
-     * @param null|FilesystemLogger $logger
      */
-    public function __construct($basePath, FilesystemLogger $logger = null)
-    {
-        $this->basePath = $basePath;
-        $this->logger = $logger;
+    public function __construct(
+        private $basePath,
+        private readonly ?FilesystemLogger $logger = null,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsSuite(Suite $suite)
+    public function supportsSuite(Suite $suite): bool
     {
         return $suite->hasSetting('paths') && is_array($suite->getSetting('paths'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setupSuite(Suite $suite)
+    public function setupSuite(Suite $suite): void
     {
         foreach ($suite->getSetting('paths') as $locator) {
-            if (0 !== strpos($locator, '@') && !is_dir($path = $this->locatePath($locator))) {
+            if (!str_starts_with((string) $locator, '@') && !is_dir($path = $this->locatePath($locator))) {
                 $this->createFeatureDirectory($path);
             }
         }
@@ -67,11 +51,11 @@ final class SuiteWithPathsSetup implements SuiteSetup
      *
      * @param string $path
      */
-    private function createFeatureDirectory($path)
+    private function createFeatureDirectory($path): void
     {
         mkdir($path, 0777, true);
 
-        if ($this->logger) {
+        if ($this->logger instanceof FilesystemLogger) {
             $this->logger->directoryCreated($path, 'place your *.feature files here');
         }
     }
@@ -96,21 +80,15 @@ final class SuiteWithPathsSetup implements SuiteSetup
      * Returns whether the file path is an absolute path.
      *
      * @param string $file A file path
-     *
-     * @return bool
      */
-    private function isAbsolutePath($file)
+    private function isAbsolutePath($file): bool
     {
-        if ($file[0] == '/' || $file[0] == '\\'
-            || (strlen($file) > 3 && ctype_alpha($file[0])
+        return $file[0] == '/' || $file[0] == '\\'
+            || (
+                strlen($file) > 3 && ctype_alpha($file[0])
                 && $file[1] == ':'
                 && ($file[2] == '\\' || $file[2] == '/')
             )
-            || null !== parse_url($file, PHP_URL_SCHEME)
-        ) {
-            return true;
-        }
-
-        return false;
+            || null !== parse_url($file, PHP_URL_SCHEME);
     }
 }
