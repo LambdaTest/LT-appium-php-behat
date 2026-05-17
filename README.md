@@ -1,31 +1,26 @@
-# Behat With Appium ![pw](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+# Run Behat Appium PHP Tests on TestMu AI (Formerly LambdaTest)
+
+<p align="center">
+  <a href="https://www.testmuai.com/"><img src="https://img.shields.io/badge/MADE%20BY%20TestMu%20AI-000000.svg?style=for-the-badge&labelColor=000" alt="Made by TestMu AI"></a>
+  <a href="https://community.testmuai.com/"><img src="https://img.shields.io/badge/Join%20the%20community-blueviolet.svg?style=for-the-badge&labelColor=000000" alt="Community"></a>
+</p>
 
 <p align="center">
 <img height="500" src="https://user-images.githubusercontent.com/70570645/171988795-ed884ca8-f431-48b3-afcc-91a014fd5059.png">
 </p>
 
-<p align="center">
-  <a href="https://www.lambdatest.com/blog/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat" target="_bank">Blog</a>
-  &nbsp; &#8901; &nbsp;
-  <a href="https://www.lambdatest.com/support/docs/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat" target="_bank">Docs</a>
-  &nbsp; &#8901; &nbsp;
-  <a href="https://www.lambdatest.com/learning-hub/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat" target="_bank">Learning Hub</a>
-  &nbsp; &#8901; &nbsp;
-  <a href="https://www.lambdatest.com/newsletter/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat" target="_bank">Newsletter</a>
-  &nbsp; &#8901; &nbsp;
-  <a href="https://www.lambdatest.com/certifications/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat" target="_bank">Certifications</a>
-  &nbsp; &#8901; &nbsp;
-  <a href="https://www.youtube.com/c/LambdaTest" target="_bank">YouTube</a>
-</p>
-&emsp;
-&emsp;
-&emsp;
+_Appium is a tool for automating native, mobile web, and hybrid applications on iOS, Android, and Windows platforms. It supports iOS native apps written in Objective-C or Swift and Android native apps written in Java or Kotlin. It also supports mobile web apps accessed using a mobile browser (Appium supports Safari on iOS and Chrome or the built-in 'Browser' app on Android). Perform Appium automation tests on TestMu AI (Formerly LambdaTest) online cloud._
 
-_Appium is a tool for automating native, mobile web, and hybrid applications on iOS, Android, and Windows platforms. It supports iOS native apps written in Objective-C or Swift and Android native apps written in Java or Kotlin. It also supports mobile web apps accessed using a mobile browser (Appium supports Safari on iOS and Chrome or the built-in 'Browser' app on Android). Perform Appium automation tests on [LambdaTest's online cloud](https://www.lambdatest.com/appium-mobile-testing?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)._
+_Learn the basics of Appium testing on the TestMu AI (Formerly LambdaTest) platform._
 
-_Learn the basics of [Appium testing on the LambdaTest platform](https://www.lambdatest.com/support/docs/getting-started-with-appium-testing/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)._
+## Getting Started
 
-[<img height="53" width="200" src="https://user-images.githubusercontent.com/70570645/171866795-52c11b49-0728-4229-b073-4b704209ddde.png">](https://accounts.lambdatest.com/register?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
+TestMu AI (Formerly LambdaTest) is an AI-native, multi-agent quality engineering platform that enables you to run Behat Appium PHP tests on real devices in the cloud.
+
+Use this sample to run your Behat PHP Appium tests on the TestMu AI (Formerly LambdaTest) platform.
+
+- [Sign up on TestMu AI](https://www.testmuai.com/register/) (Formerly LambdaTest).
+- Follow the [TestMu AI Documentation](https://www.testmuai.com/support/docs/) for the full setup walkthrough.
 
 ## Table of Contents
 
@@ -39,7 +34,7 @@ Before you begin automation testing with Appium, you would need to follow these 
 
 ### Clone The Sample Project
 
-Clone the LambdaTest’s :link: [LT-appium-php-behat](https://github.com/LambdaTest/LT-appium-php-behat) repository and navigate to the code directory as shown below:
+Clone the TestMu AI (Formerly LambdaTest) [LT-appium-php-behat](https://github.com/LambdaTest/LT-appium-php-behat) repository and navigate to the code directory as shown below:
 
 ```bash
 git clone https://github.com/LambdaTest/LT-appium-php-behat
@@ -103,9 +98,9 @@ In case of any error, please try restarting.
 
 ### Setting Up Your Authentication
 
-Make sure you have your LambdaTest credentials with you to run test automation scripts on LambdaTest. To obtain your access credentials, [purchase a plan](https://billing.lambdatest.com/billing/plans?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat) or access the [Automation Dashboard](https://appautomation.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat).
+Make sure you have your TestMu AI (Formerly LambdaTest) credentials with you to run test automation scripts on TestMu AI (Formerly LambdaTest).
 
-Set LambdaTest `Username` and `Access Key` in environment variables.
+Set TestMu AI (Formerly LambdaTest) `Username` and `Access Key` in environment variables.
 
 **For Linux/macOS:**
 
@@ -123,7 +118,7 @@ set LT_ACCESS_KEY=YOUR_LAMBDATEST_ACCESS_KEY
 
 ### Upload Your Application
 
-Upload your **_iOS_** application (.ipa file) or **_android_** application (.apk file) to the LambdaTest servers using our **REST API**. You need to provide your **Username** and **AccessKey** in the format `Username:AccessKey` in the **cURL** command for authentication. Make sure to add the path of the **appFile** in the cURL request. Here is an example cURL request to upload your app using our REST API:
+Upload your **_iOS_** application (.ipa file) or **_android_** application (.apk file) to the TestMu AI (Formerly LambdaTest) servers using our **REST API**. You need to provide your **Username** and **AccessKey** in the format `Username:AccessKey` in the **cURL** command for authentication. Make sure to add the path of the **appFile** in the cURL request. Here is an example cURL request to upload your app using our REST API:
 
 **Using App File:**
 
@@ -161,7 +156,7 @@ curl -u "YOUR_LAMBDATEST_USERNAME:YOUR_LAMBDATEST_ACCESS_KEY" -X POST "https://m
 
 **Tip:**
 
-- If you do not have any **.apk** or **.ipa** file, you can run your sample tests on LambdaTest by using our sample :link: [Android app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_android.apk) or sample :link: [iOS app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_ios.ipa).
+- If you do not have any **.apk** or **.ipa** file, you can run your sample tests on TestMu AI (Formerly LambdaTest) by using our sample [Android app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_android.apk) or sample [iOS app](https://prod-mobile-artefacts.lambdatest.com/assets/docs/proverbial_ios.ipa).
 - Response of above cURL will be a **JSON** object containing the `App URL` of the format - <lt://APP123456789123456789> and will be used in the next step.
 
 ## Run Your First Test
@@ -212,11 +207,11 @@ You can update your custom capabilities in test scripts. In this sample project,
 **Info Note:**
 
 - You must add the generated **APP_URL** to the `"app"` capability in the config file.
-- You can generate capabilities for your test requirements with the help of our inbuilt **[Capabilities Generator tool](https://www.lambdatest.com/capabilities-generator/beta/index.html?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)**. A more Detailed Capability Guide is available [here](https://www.lambdatest.com/support/docs/desired-capabilities-in-appium/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat).
+- You can generate capabilities for your test requirements with the help of our inbuilt Capabilities Generator tool.
 
 ### Executing The Tests
 
-Execute the following command to run your test on LambdaTest platform:
+Execute the following command to run your test on TestMu AI (Formerly LambdaTest) platform:
 
 **IOS:**
 
@@ -232,52 +227,26 @@ composer androidsingle   #for single tests
 composer androidparallel  #for parallel tests
 ```
 
-**Info:** Your test results would be displayed on the test console (or command-line interface if you are using terminal/cmd) and on the :link: [LambdaTest App Automation Dashboard](https://appautomation.lambdatest.com/build?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat).
+**Info:** Your test results would be displayed on the test console (or command-line interface if you are using terminal/cmd) and on the TestMu AI (Formerly LambdaTest) App Automation Dashboard.
 
-## Additional Links
+## LambdaTest is Now TestMu AI
 
-- [Advanced Configuration for Capabilities](https://www.lambdatest.com/support/docs/desired-capabilities-in-appium/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
-- [How to test locally hosted apps](https://www.lambdatest.com/support/docs/testing-locally-hosted-pages/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
-- [How to integrate LambdaTest with CI/CD](https://www.lambdatest.com/support/docs/integrations-with-ci-cd-tools/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
+On **January 12, 2026**, [LambdaTest evolved to TestMu AI](https://www.testmuai.com/lambdatest-is-now-testmuai/), the world's first fully autonomous **Agentic AI Quality Engineering Platform**.
 
-## Documentation & Resources :books:
+Same team. Same infrastructure. Same customer accounts. All existing LambdaTest logins, scripts, capabilities, and integrations continue to work without change.
 
-Visit the following links to learn more about LambdaTest's features, setup and tutorials around test automation, mobile app testing, responsive testing, and manual testing.
+ð Find the new home for [LambdaTest](https://www.testmuai.com).
 
-- [LambdaTest Documentation](https://www.lambdatest.com/support/docs/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
-- [LambdaTest Blog](https://www.lambdatest.com/blog/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
-- [LambdaTest Learning Hub](https://www.lambdatest.com/learning-hub/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
+### How LambdaTest Evolved into TestMu AI
 
-## LambdaTest Community :busts_in_silhouette:
+In 2017, we launched LambdaTest with a simple mission: make testing fast, reliable, and accessible. As LambdaTest grew, we expanded into Test Intelligence, Visual Regression Testing, Accessibility Testing, API Testing, and Performance Testing, covering the full depth of the testing lifecycle.
 
-The [LambdaTest Community](https://community.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat) allows people to interact with tech enthusiasts. Connect, ask questions, and learn from tech-savvy people. Discuss best practises in web development, testing, and DevOps with professionals from across the globe 🌎
+As software development entered the AI era, testing had to evolve, too. We rebuilt the architecture to be AI-native from the ground up, with autonomous agents that **plan, author, execute, analyze, and optimize tests** while keeping humans in the loop. The platform integrates with your repos, CI, IDEs, and terminals, continuously learning from every code change and development signal.
 
-## What's New At LambdaTest ❓
+That evolution earned a new name: **TestMu AI**, built for an AI-first future of quality engineering. TestMu is not a new name for us. It is the name of our annual community conference, which has brought together 100,000+ quality engineers to discuss how AI would reshape testing, long before that became an industry norm. 
 
-To stay updated with the latest features and product add-ons, visit [Changelog](https://changelog.lambdatest.com/)
+What started as a high-performance cloud testing platform has transformed into an AI-native, multi-agent system powering a connected, end-to-end quality layer. That evolution defined a new identity: LambdaTest evolved into TestMu AI, built for an AI-first future of quality engineering.
 
-## About LambdaTest
+## Support
 
-[LambdaTest](https://www.lambdatest.com?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat) is a leading test execution and orchestration platform that is fast, reliable, scalable, and secure. It allows users to run both manual and automated testing of web and mobile apps across 3000+ different browsers, operating systems, and real device combinations. Using LambdaTest, businesses can ensure quicker developer feedback and hence achieve faster go to market. Over 500 enterprises and 1 Million + users across 130+ countries rely on LambdaTest for their testing needs.
-
-### Features
-
-- Run Selenium, Cypress, Puppeteer, Playwright, and Appium automation tests across 3000+ real desktop and mobile environments.
-- Real-time cross browser testing on 3000+ environments.
-- Test on Real device cloud
-- Blazing fast test automation with HyperExecute
-- Accelerate testing, shorten job times and get faster feedback on code changes with Test At Scale.
-- Smart Visual Regression Testing on cloud
-- 120+ third-party integrations with your favorite tool for CI/CD, Project Management, Codeless Automation, and more.
-- Automated Screenshot testing across multiple browsers in a single click.
-- Local testing of web and mobile apps.
-- Online Accessibility Testing across 3000+ desktop and mobile browsers, browser versions, and operating systems.
-- Geolocation testing of web and mobile apps across 53+ countries.
-- LT Browser - for responsive testing across 50+ pre-installed mobile, tablets, desktop, and laptop viewports
-
-[<img height="53" width="200" src="https://user-images.githubusercontent.com/70570645/171866795-52c11b49-0728-4229-b073-4b704209ddde.png">](https://accounts.lambdatest.com/register?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
-
-## We are here to help you :headphones:
-
-- Got a query? we are available 24x7 to help. [Contact Us](mailto:support@lambdatest.com)
-- For more info, visit - [LambdaTest](https://www.lambdatest.com/?utm_source=github&utm_medium=repo&utm_campaign=LT-appium-php-behat)
+Got a question? Email [support@testmuai.com](mailto:support@testmuai.com) or chat with us 24x7 from our chat portal.
