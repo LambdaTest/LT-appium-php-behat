@@ -8,17 +8,19 @@ default:
              - FeatureContext:
                     parameters:
                         server: "mobile-hub.lambdatest.com"
-                        user: ${LT_USERNAME}       #Add LambdaTest username here 
-                        key: ${LT_ACCESS_KEY}      #Add LambdaTest accessKey here
+                        user: "${LT_USERNAME}"
+                        key: "${LT_ACCESS_KEY}"
                         capabilities:
                             build: "behat-appium-ios"
                             name: "single-behat-test"
                             isRealMobile: true
-                            app: "lt://proverbial-ios"    #Add app url here
+                            app: "${IOS_APP_ID}"
+                            # autoAcceptAlerts: true,
+                            autoGrantPermissions: true
                         environments:
                             -
-                                deviceName: iPhone .*
-                                platform: ios
-                                platformVersion: 14
+                                deviceName: "iPhone .*"
+                                platform: "ios"
+                                platformVersion: "18"
 
 

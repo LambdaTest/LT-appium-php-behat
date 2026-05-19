@@ -8,30 +8,32 @@ default:
                 - FeatureContext:
                     parameters:
                         server: "mobile-hub.lambdatest.com"
-                        user: ${LT_USERNAME}       #Add LambdaTest username here 
-                        key: ${LT_ACCESS_KEY}      #Add LambdaTest accessKey here
+                        user: "${LT_USERNAME}"
+                        key: "${LT_ACCESS_KEY}"
                         capabilities:
                             # common capabilities added for every test
                             build: "behat-parallel-ios"
                             name: "parallel-behat-test"
                             isRealMobile: true
-                            app: "lt://proverbial-ios"     #Add app url here
+                            app: "${IOS_APP_ID}"
+                            # autoAcceptAlerts: true,
+                            autoGrantPermissions: true
                         environments:
                             # each capability in this list is execute as single test
                             # so to run multiple tests in parallel,
                             # simply define multiple capabilities below and execute the test with
                             # $ php run-parallel.php -c config/<filename>.yml
                         -
-                            deviceName: iPhone .*
-                            platform: ios
-                            platformVersion: 13
+                            deviceName: "iPhone .*"
+                            platform: "ios"
+                            platformVersion: "18"
                         -
-                            deviceName: iPad .*
-                            platform: ios
-                            platformVersion: 14
+                            deviceName: "iPhone .*"
+                            platform: "ios"
+                            platformVersion: "17"
                         -
-                            deviceName: iPhone .*
-                            platform: ios
-                            platformVersion: 15
+                            deviceName: "iPhone .*"
+                            platform: "ios"
+                            platformVersion: "16"
 
                     

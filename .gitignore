@@ -1,1 +1,36 @@
+# Dependencies
+vendor/
 composer.lock
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Build and cache
+/build/
+/cache/
+*.cache
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test reports and coverage
+/coverage/
+/reports/
+.phpunit.result.cache
+
+# System files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+*.bak

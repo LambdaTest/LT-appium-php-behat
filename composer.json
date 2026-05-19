@@ -1,11 +1,10 @@
 {
   "require": {
     "behat/behat": "^3.12",
-    "facebook/webdriver": "dev-master",
+    "php-webdriver/webdriver": "^1.15",
     "appium/php-client": "dev-master",
-    "symfony/yaml": "*",
-    "phpwhois/phpwhois": "^4.2",
-    "php-webdriver/webdriver": "^1.1"
+    "symfony/yaml": "^6.3",
+    "phpwhois/phpwhois": "^4.2"
   },
   "config": {
       "bin-dir": "bin/"
@@ -16,7 +15,6 @@
     "iossingle":"./bin/behat --config=config/iossingle.conf.yml",
     "parallelandroid": "CONFIG_FILE=config/parallelandroid.conf.yml /usr/bin/env php exec-parallel.php",
     "parallelios": "CONFIG_FILE=config/parallelios.conf.yml /usr/bin/env php exec-parallel.php"
-
   },
   "autoload": {
     "classmap": ["lib/"]
