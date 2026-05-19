@@ -27,75 +27,52 @@ use Psr\Container\ContainerInterface;
  */
 final class InitializedContextEnvironment implements ContextEnvironment, ServiceContainerEnvironment
 {
+    private ?ContainerInterface $serviceContainer = null;
+
     /**
-     * @var string
+     * @var array<class-string<Context>, Context>
+     *
+     * TODO use a class-string-map type to have an accurate type once https://github.com/phpstan/phpstan/issues/9521 is implemented
      */
-    private $suite;
-    /**
-     * @var ContainerInterface
-     */
-    private $serviceContainer;
-    /**
-     * @var Context[]
-     */
-    private $contexts = array();
+    private $contexts = [];
 
     /**
      * Initializes environment.
-     *
-     * @param Suite $suite
      */
-    public function __construct(Suite $suite)
-    {
-        $this->suite = $suite;
+    public function __construct(
+        private readonly Suite $suite,
+    ) {
     }
 
     /**
      * Registers context instance in the environment.
-     *
-     * @param Context $context
      */
-    public function registerContext(Context $context)
+    public function registerContext(Context $context): void
     {
-        $this->contexts[get_class($context)] = $context;
+        $this->contexts[$context::class] = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setServiceContainer(ContainerInterface $container = null)
+    public function setServiceContainer(?ContainerInterface $container = null): void
     {
         $this->serviceContainer = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSuite()
+    public function getSuite(): Suite
     {
         return $this->suite;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasContexts()
+    public function hasContexts(): bool
     {
         return count($this->contexts) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContextClasses()
     {
         return array_keys($this->contexts);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasContextClass($class)
+    public function hasContextClass($class): bool
     {
         return isset($this->contexts[$class]);
     }
@@ -103,7 +80,7 @@ final class InitializedContextEnvironment implements ContextEnvironment, Service
     /**
      * Returns list of registered context instances.
      *
-     * @return Context[]
+     * @return list<Context>
      */
     public function getContexts()
     {
@@ -113,9 +90,11 @@ final class InitializedContextEnvironment implements ContextEnvironment, Service
     /**
      * Returns registered context by its class name.
      *
-     * @param string $class
+     * @template T of Context
      *
-     * @return Context
+     * @param class-string<T> $class
+     *
+     * @return T
      *
      * @throws ContextNotFoundException If context is not in the environment
      */
@@ -131,23 +110,17 @@ final class InitializedContextEnvironment implements ContextEnvironment, Service
         return $this->contexts[$class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getServiceContainer()
+    public function getServiceContainer(): ?ContainerInterface
     {
         return $this->serviceContainer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function bindCallee(Callee $callee)
     {
         $callable = $callee->getCallable();
 
-        if ($callee->isAnInstanceMethod()) {
-            return array($this->getContext($callable[0]), $callable[1]);
+        if ($callee->isAnInstanceMethod() && is_array($callable)) {
+            return [$this->getContext($callable[0]), $callable[1]];
         }
 
         return $callable;

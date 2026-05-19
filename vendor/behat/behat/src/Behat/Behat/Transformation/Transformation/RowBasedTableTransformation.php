@@ -18,25 +18,18 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Call\CallCenter;
 use Behat\Testwork\Call\RuntimeCallee;
 use ReflectionMethod;
+use Stringable;
 
 /**
  * Row-based table transformation.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class RowBasedTableTransformation extends RuntimeCallee implements SimpleArgumentTransformation
+final class RowBasedTableTransformation extends RuntimeCallee implements Stringable, SimpleArgumentTransformation
 {
-    public const PATTERN_REGEX = '/^rowtable\:[[:print:]]+$/';
+    public const PATTERN_REGEX = '/^rowtable\:[[:print:]]+$/u';
 
-    /**
-     * @var string
-     */
-    private $pattern;
-
-    /**
-     * {@inheritdoc}
-     */
-    static public function supportsPatternAndMethod($pattern, ReflectionMethod $method)
+    public static function supportsPatternAndMethod($pattern, ReflectionMethod $method): bool
     {
         return 1 === preg_match(self::PATTERN_REGEX, $pattern);
     }
@@ -46,53 +39,48 @@ final class RowBasedTableTransformation extends RuntimeCallee implements SimpleA
      *
      * @param string      $pattern
      * @param callable    $callable
-     * @param null|string $description
+     * @param string|null $description
      */
-    public function __construct($pattern, $callable, $description = null)
-    {
-        $this->pattern = $pattern;
-
+    public function __construct(
+        private $pattern,
+        $callable,
+        $description = null,
+    ) {
         parent::__construct($callable, $description);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsDefinitionAndArgument(DefinitionCall $definitionCall, $argumentIndex, $value)
+    public function supportsDefinitionAndArgument(DefinitionCall $definitionCall, $argumentIndex, $argumentArgumentValue)
     {
-        if (!$value instanceof TableNode) {
+        if (!$argumentArgumentValue instanceof TableNode) {
             return false;
-        };
+        }
 
         // What we're doing here is checking that we have a 2 column table.
         // This bit checks we have two columns
         try {
-            $value->getColumn(1);
-        } catch (NodeException $e) {
+            $argumentArgumentValue->getColumn(1);
+        } catch (NodeException) {
             return false;
         }
 
         // And here we check we don't have a 3rd column
         try {
-            $value->getColumn(2);
-        } catch (NodeException $e) {
+            $argumentArgumentValue->getColumn(2);
+        } catch (NodeException) {
             // Once we know the table could be a row table, we check against the pattern.
-            return $this->pattern === 'rowtable:' . implode(',', $value->getColumn(0));
+            return $this->pattern === 'rowtable:' . implode(',', $argumentArgumentValue->getColumn(0));
         }
 
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transformArgument(CallCenter $callCenter, DefinitionCall $definitionCall, $argumentIndex, $argumentValue)
     {
         $call = new TransformationCall(
             $definitionCall->getEnvironment(),
             $definitionCall->getCallee(),
             $this,
-            array($argumentValue)
+            [$argumentValue]
         );
 
         $result = $callCenter->makeCall($call);
@@ -104,25 +92,16 @@ final class RowBasedTableTransformation extends RuntimeCallee implements SimpleA
         return $result->getReturn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 50;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPattern()
     {
         return $this->pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return 'RowTableTransform ' . $this->pattern;

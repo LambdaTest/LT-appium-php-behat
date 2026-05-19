@@ -10,7 +10,7 @@
 
 namespace Behat\Behat\Gherkin\Specification;
 
-use Behat\Gherkin\Filter\FilterInterface;
+use Behat\Gherkin\Filter\FeatureFilterInterface;
 use Behat\Gherkin\Filter\NameFilter;
 use Behat\Gherkin\Filter\NarrativeFilter;
 use Behat\Gherkin\Filter\RoleFilter;
@@ -25,33 +25,27 @@ use Behat\Testwork\Suite\Suite;
  * Lazily iterates (parses one-by-one) over features.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @implements SpecificationIterator<FeatureNode>
  */
 final class LazyFeatureIterator implements SpecificationIterator
 {
     /**
-     * @var Suite
-     */
-    private $suite;
-    /**
-     * @var Gherkin
-     */
-    private $gherkin;
-    /**
      * @var string[]
      */
-    private $paths = array();
+    private $paths = [];
     /**
-     * @var FilterInterface[]
+     * @var FeatureFilterInterface[]
      */
-    private $filters = array();
+    private $filters = [];
     /**
-     * @var integer
+     * @var int
      */
     private $position = 0;
     /**
      * @var FeatureNode[]
      */
-    private $features = array();
+    private $features = [];
     /**
      * @var FeatureNode
      */
@@ -60,63 +54,45 @@ final class LazyFeatureIterator implements SpecificationIterator
     /**
      * Initializes specifications.
      *
-     * @param Suite             $suite
-     * @param Gherkin           $gherkin
      * @param string[]          $paths
-     * @param FilterInterface[] $filters
+     * @param FeatureFilterInterface[] $filters
      */
-    public function __construct(Suite $suite, Gherkin $gherkin, array $paths, array $filters = array())
-    {
-        $this->suite = $suite;
-        $this->gherkin = $gherkin;
+    public function __construct(
+        private readonly Suite $suite,
+        private readonly Gherkin $gherkin,
+        array $paths,
+        array $filters = [],
+    ) {
         $this->paths = array_values($paths);
-        $this->filters = array_merge($this->getSuiteFilters($suite), $filters);
+        $this->filters = array_merge($this->getSuiteFilters($this->suite), $filters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSuite()
+    public function getSuite(): Suite
     {
         return $this->suite;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rewind(): void
     {
         $this->position = 0;
         $this->moveToNextAvailableFeature();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function next(): void
     {
         $this->moveToNextAvailableFeature();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function valid(): bool
     {
         return null !== $this->currentFeature;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function key(): int
     {
         return $this->position;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function current(): FeatureNode
     {
         return $this->currentFeature;
@@ -125,17 +101,15 @@ final class LazyFeatureIterator implements SpecificationIterator
     /**
      * Returns list of filters from suite settings.
      *
-     * @param Suite $suite
-     *
-     * @return FilterInterface[]
+     * @return list<FeatureFilterInterface>
      */
-    private function getSuiteFilters(Suite $suite)
+    private function getSuiteFilters(Suite $suite): array
     {
         if (!$suite->hasSetting('filters') || !is_array($suite->getSetting('filters'))) {
-            return array();
+            return [];
         }
 
-        $filters = array();
+        $filters = [];
         foreach ($suite->getSetting('filters') as $type => $filterString) {
             $filters[] = $this->createFilter($type, $filterString, $suite);
         }
@@ -148,13 +122,10 @@ final class LazyFeatureIterator implements SpecificationIterator
      *
      * @param string $type
      * @param string $filterString
-     * @param Suite  $suite
-     *
-     * @return FilterInterface
      *
      * @throws SuiteConfigurationException If filter type is not recognised
      */
-    private function createFilter($type, $filterString, Suite $suite)
+    private function createFilter($type, $filterString, Suite $suite): FeatureFilterInterface
     {
         if ('role' === $type) {
             return new RoleFilter($filterString);
@@ -176,18 +147,18 @@ final class LazyFeatureIterator implements SpecificationIterator
             '`%s` filter is not supported by the `%s` suite. Supported types are `%s`.',
             $type,
             $suite->getName(),
-            implode('`, `', array('role', 'name', 'tags'))
+            implode('`, `', ['narrative', 'role', 'name', 'tags'])
         ), $suite->getName());
     }
 
     /**
      * Parses paths consequently.
      */
-    private function moveToNextAvailableFeature()
+    private function moveToNextAvailableFeature(): void
     {
         while (!count($this->features) && $this->position < count($this->paths)) {
             $this->features = $this->parseFeature($this->paths[$this->position]);
-            $this->position++;
+            ++$this->position;
         }
 
         $this->currentFeature = array_shift($this->features);

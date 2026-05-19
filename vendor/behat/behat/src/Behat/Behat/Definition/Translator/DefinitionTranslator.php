@@ -21,26 +21,22 @@ use Behat\Testwork\Suite\Suite;
 final class DefinitionTranslator
 {
     /**
-     * @var TranslatorInterface
+     * @var array<string, string>
      */
-    private $translator;
+    private array $translationCache = [];
 
     /**
      * Initialises definition translator.
-     *
-     * @param TranslatorInterface $translator
      */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
+    public function __construct(
+        private readonly TranslatorInterface $translator,
+    ) {
     }
 
     /**
      * Attempts to translate definition using translator and produce translated one on success.
      *
-     * @param Suite       $suite
-     * @param Definition  $definition
-     * @param null|string $language
+     * @param string|null $language
      *
      * @return Definition|TranslatedDefinition
      */
@@ -48,13 +44,25 @@ final class DefinitionTranslator
     {
         $assetsId = $suite->getName();
         $pattern = $definition->getPattern();
+        $cacheKey = sprintf('%s|%s|%s', $assetsId, $pattern, $language ?? $this->getLocale());
 
-        $translatedPattern = $this->translator->trans($pattern, array(), $assetsId, $language);
+        if (isset($this->translationCache[$cacheKey])) {
+            $translatedPattern = $this->translationCache[$cacheKey];
+        } else {
+            $translatedPattern = $this->translator->trans($pattern, [], $assetsId, $language);
+            $this->translationCache[$cacheKey] = $translatedPattern;
+        }
+
         if ($pattern != $translatedPattern) {
             return new TranslatedDefinition($definition, $translatedPattern, $language);
         }
 
         return $definition;
+    }
+
+    public function translateInfoText(string $infoText, array $parameters): string
+    {
+        return $this->translator->trans($infoText, $parameters, 'output');
     }
 
     public function getLocale()

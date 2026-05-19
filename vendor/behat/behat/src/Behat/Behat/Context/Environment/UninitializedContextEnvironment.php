@@ -10,10 +10,12 @@
 
 namespace Behat\Behat\Context\Environment;
 
+use Behat\Behat\Context\Context;
 use Behat\Behat\Context\Environment\Handler\ContextEnvironmentHandler;
 use Behat\Behat\Context\Exception\ContextNotFoundException;
 use Behat\Behat\Context\Exception\WrongContextClassException;
 use Behat\Testwork\Environment\StaticEnvironment;
+use ReflectionClass;
 
 /**
  * Context environment based on a list of context classes.
@@ -25,20 +27,19 @@ use Behat\Testwork\Environment\StaticEnvironment;
 final class UninitializedContextEnvironment extends StaticEnvironment implements ContextEnvironment
 {
     /**
-     * @var array[]
+     * @var array<class-string<Context>, array>
      */
-    private $contextClasses = array();
+    private $contextClasses = [];
 
     /**
      * Registers context class.
      *
-     * @param string     $contextClass
-     * @param null|array $arguments
+     * @param class-string<Context> $contextClass
      *
      * @throws ContextNotFoundException   If class does not exist
      * @throws WrongContextClassException if class does not implement Context interface
      */
-    public function registerContextClass($contextClass, array $arguments = null)
+    public function registerContextClass($contextClass, ?array $arguments = null): void
     {
         if (!class_exists($contextClass)) {
             throw new ContextNotFoundException(sprintf(
@@ -47,38 +48,29 @@ final class UninitializedContextEnvironment extends StaticEnvironment implements
             ), $contextClass);
         }
 
-        $reflClass = new \ReflectionClass($contextClass);
+        $reflClass = new ReflectionClass($contextClass);
 
-        if (!$reflClass->implementsInterface('Behat\Behat\Context\Context')) {
+        if (!$reflClass->implementsInterface(Context::class)) {
             throw new WrongContextClassException(sprintf(
                 'Every context class must implement Behat Context interface, but `%s` does not.',
                 $contextClass
             ), $contextClass);
         }
 
-        $this->contextClasses[$contextClass] = $arguments ? : array();
+        $this->contextClasses[$contextClass] = $arguments ?: [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasContexts()
+    public function hasContexts(): bool
     {
         return count($this->contextClasses) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getContextClasses()
     {
         return array_keys($this->contextClasses);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasContextClass($class)
+    public function hasContextClass($class): bool
     {
         return isset($this->contextClasses[$class]);
     }
@@ -86,7 +78,7 @@ final class UninitializedContextEnvironment extends StaticEnvironment implements
     /**
      * Returns context classes with their arguments.
      *
-     * @return array[]
+     * @return array<class-string<Context>, array>
      */
     public function getContextClassesWithArguments()
     {

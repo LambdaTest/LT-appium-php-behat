@@ -11,6 +11,7 @@
 namespace Behat\Testwork\Filesystem\ServiceContainer;
 
 use Behat\Testwork\Cli\ServiceContainer\CliExtension;
+use Behat\Testwork\Filesystem\ConsoleFilesystemLogger;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -30,54 +31,37 @@ final class FilesystemExtension implements Extension
      */
     public const LOGGER_ID = 'filesystem.logger';
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'filesystem';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $this->loadFilesystemLogger($container);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
     }
 
     /**
      * Loads filesystem logger.
-     *
-     * @param ContainerBuilder $container
      */
-    protected function loadFilesystemLogger(ContainerBuilder $container)
+    protected function loadFilesystemLogger(ContainerBuilder $container): void
     {
-        $definition = new Definition('Behat\Testwork\Filesystem\ConsoleFilesystemLogger', array(
+        $definition = new Definition(ConsoleFilesystemLogger::class, [
             '%paths.base%',
-            new Reference(CliExtension::OUTPUT_ID)
-        ));
+            new Reference(CliExtension::OUTPUT_ID),
+        ]);
         $container->setDefinition(self::LOGGER_ID, $definition);
     }
 }

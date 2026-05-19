@@ -23,38 +23,28 @@ use ReflectionMethod;
 final class ConstructorArgumentOrganiser implements ArgumentOrganiser
 {
     /**
-     * @var ArgumentOrganiser
-     */
-    private $baseOrganiser;
-
-    /**
      * Initializes organiser.
-     *
-     * @param ArgumentOrganiser $organiser
      */
-    public function __construct(ArgumentOrganiser $organiser)
-    {
-        $this->baseOrganiser = $organiser;
+    public function __construct(
+        private readonly ArgumentOrganiser $baseOrganiser,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function organiseArguments(ReflectionFunctionAbstract $constructor, array $arguments)
+    public function organiseArguments(ReflectionFunctionAbstract $function, array $arguments)
     {
-        if (!$constructor instanceof ReflectionMethod) {
+        if (!$function instanceof ReflectionMethod) {
             throw new UnsupportedFunctionException(sprintf(
                 'ConstructorArgumentOrganiser can only work with ReflectionMethod, but `%s` given.',
-                get_class($constructor)
+                $function::class
             ));
         }
 
         $organisedArguments = $this->baseOrganiser->organiseArguments(
-            $constructor,
+            $function,
             $arguments
         );
 
-        $this->validateArguments($constructor, $arguments, $organisedArguments);
+        $this->validateArguments($function, $arguments, $organisedArguments);
 
         return $organisedArguments;
     }
@@ -62,7 +52,6 @@ final class ConstructorArgumentOrganiser implements ArgumentOrganiser
     /**
      * Checks that all provided constructor arguments are present in the constructor.
      *
-     * @param ReflectionMethod $constructor
      * @param mixed[]          $passedArguments
      * @param mixed[]          $organisedArguments
      *
@@ -71,9 +60,9 @@ final class ConstructorArgumentOrganiser implements ArgumentOrganiser
     private function validateArguments(
         ReflectionMethod $constructor,
         array $passedArguments,
-        array $organisedArguments
-    ) {
-        foreach ($passedArguments as $key => $val) {
+        array $organisedArguments,
+    ): void {
+        foreach (array_keys($passedArguments) as $key) {
             if (array_key_exists($key, $organisedArguments)) {
                 continue;
             }

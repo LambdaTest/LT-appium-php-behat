@@ -29,22 +29,20 @@ final class SuiteRegistry implements SuiteRepository
     /**
      * @var SuiteGenerator[]
      */
-    private $generators = array();
+    private $generators = [];
     /**
      * @var array
      */
-    private $suiteConfigurations = array();
+    private $suiteConfigurations = [];
     /**
      * @var Suite[]
      */
-    private $suites = array();
+    private $suites = [];
 
     /**
      * Registers suite generator.
-     *
-     * @param SuiteGenerator $generator
      */
-    public function registerSuiteGenerator(SuiteGenerator $generator)
+    public function registerSuiteGenerator(SuiteGenerator $generator): void
     {
         $this->generators[] = $generator;
         $this->suitesGenerated = false;
@@ -55,11 +53,10 @@ final class SuiteRegistry implements SuiteRepository
      *
      * @param string $name
      * @param string $type
-     * @param array  $settings
      *
      * @throws SuiteConfigurationException
      */
-    public function registerSuiteConfiguration($name, $type, array $settings)
+    public function registerSuiteConfiguration($name, $type, array $settings): void
     {
         if (isset($this->suiteConfigurations[$name])) {
             throw new SuiteConfigurationException(sprintf(
@@ -68,7 +65,7 @@ final class SuiteRegistry implements SuiteRepository
             ), $name);
         }
 
-        $this->suiteConfigurations[$name] = array($type, $settings);
+        $this->suiteConfigurations[$name] = [$type, $settings];
         $this->suitesGenerated = false;
     }
 
@@ -83,9 +80,9 @@ final class SuiteRegistry implements SuiteRepository
             return $this->suites;
         }
 
-        $this->suites = array();
+        $this->suites = [];
         foreach ($this->suiteConfigurations as $name => $configuration) {
-            list($type, $settings) = $configuration;
+            [$type, $settings] = $configuration;
 
             $this->suites[] = $this->generateSuite($name, $type, $settings);
         }
@@ -98,15 +95,9 @@ final class SuiteRegistry implements SuiteRepository
     /**
      * Generates suite using registered generators.
      *
-     * @param string $name
-     * @param string $type
-     * @param array  $settings
-     *
-     * @return Suite
-     *
      * @throws SuiteGenerationException If no appropriate generator found
      */
-    private function generateSuite($name, $type, array $settings)
+    private function generateSuite(string $name, ?string $type, array $settings): Suite
     {
         foreach ($this->generators as $generator) {
             if (!$generator->supportsTypeAndSettings($type, $settings)) {

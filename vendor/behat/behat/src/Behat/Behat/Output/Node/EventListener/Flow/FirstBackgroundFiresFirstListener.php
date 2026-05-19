@@ -30,38 +30,29 @@ use Behat\Testwork\Output\Node\EventListener\EventListener;
 class FirstBackgroundFiresFirstListener implements EventListener
 {
     /**
-     * @var \Behat\Testwork\Output\Node\EventListener\EventListener
-     */
-    private $descendant;
-    /**
      * @var bool
      */
     private $firstBackgroundEnded = false;
     /**
-     * @var Event[]
+     * @var array<array{0: Event, 1: string}>
      */
-    private $delayedUntilBackgroundEnd = array();
+    private $delayedUntilBackgroundEnd = [];
 
     /**
      * Initializes listener.
-     *
-     * @param EventListener $descendant
      */
-    public function __construct(EventListener $descendant)
-    {
-        $this->descendant = $descendant;
+    public function __construct(
+        private readonly EventListener $descendant,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function listenEvent(Formatter $formatter, Event $event, $eventName)
     {
         $this->flushStatesIfBeginningOfTheFeature($eventName);
         $this->markFirstBackgroundPrintedAfterBackground($eventName);
 
         if ($this->isEventDelayedUntilFirstBackgroundPrinted($event)) {
-            $this->delayedUntilBackgroundEnd[] = array($event, $eventName);
+            $this->delayedUntilBackgroundEnd[] = [$event, $eventName];
 
             return;
         }
@@ -75,7 +66,7 @@ class FirstBackgroundFiresFirstListener implements EventListener
      *
      * @param string $eventName
      */
-    private function flushStatesIfBeginningOfTheFeature($eventName)
+    private function flushStatesIfBeginningOfTheFeature($eventName): void
     {
         if (FeatureTested::BEFORE !== $eventName) {
             return;
@@ -89,7 +80,7 @@ class FirstBackgroundFiresFirstListener implements EventListener
      *
      * @param string $eventName
      */
-    private function markFirstBackgroundPrintedAfterBackground($eventName)
+    private function markFirstBackgroundPrintedAfterBackground($eventName): void
     {
         if (BackgroundTested::AFTER !== $eventName) {
             return;
@@ -100,8 +91,6 @@ class FirstBackgroundFiresFirstListener implements EventListener
 
     /**
      * Checks if provided event should be postponed until background is printed.
-     *
-     * @param Event $event
      *
      * @return bool
      */
@@ -117,21 +106,20 @@ class FirstBackgroundFiresFirstListener implements EventListener
     /**
      * Fires delayed events on AFTER background event.
      *
-     * @param Formatter $formatter
      * @param string    $eventName
      */
-    private function fireDelayedEventsOnAfterBackground(Formatter $formatter, $eventName)
+    private function fireDelayedEventsOnAfterBackground(Formatter $formatter, $eventName): void
     {
         if (BackgroundTested::AFTER !== $eventName) {
             return;
         }
 
         foreach ($this->delayedUntilBackgroundEnd as $eventInfo) {
-            list($event, $eventName) = $eventInfo;
+            [$event, $eventName] = $eventInfo;
 
             $this->descendant->listenEvent($formatter, $event, $eventName);
         }
 
-        $this->delayedUntilBackgroundEnd = array();
+        $this->delayedUntilBackgroundEnd = [];
     }
 }

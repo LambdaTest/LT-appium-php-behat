@@ -23,14 +23,12 @@ final class SnippetWriter
     /**
      * @var SnippetAppender[]
      */
-    private $appenders = array();
+    private $appenders = [];
 
     /**
      * Registers snippet appender.
-     *
-     * @param SnippetAppender $appender
      */
-    public function registerSnippetAppender(SnippetAppender $appender)
+    public function registerSnippetAppender(SnippetAppender $appender): void
     {
         $this->appenders[] = $appender;
     }
@@ -40,7 +38,7 @@ final class SnippetWriter
      *
      * @param AggregateSnippet[] $snippets
      */
-    public function appendSnippets(array $snippets)
+    public function appendSnippets(array $snippets): void
     {
         foreach ($snippets as $snippet) {
             $this->appendSnippet($snippet);
@@ -50,15 +48,14 @@ final class SnippetWriter
     /**
      * Prints snippets using provided printer.
      *
-     * @param SnippetPrinter     $printer
      * @param AggregateSnippet[] $snippets
      */
-    public function printSnippets(SnippetPrinter $printer, array $snippets)
+    public function printSnippets(SnippetPrinter $printer, array $snippets): void
     {
-        $printableSnippets = array();
+        $printableSnippets = [];
         foreach ($snippets as $snippet) {
             foreach ($snippet->getTargets() as $target) {
-                $targetSnippets = array();
+                $targetSnippets = [];
 
                 if (isset($printableSnippets[$target])) {
                     $targetSnippets = $printableSnippets[$target];
@@ -77,18 +74,17 @@ final class SnippetWriter
     /**
      * Prints undefined steps using provided printer.
      *
-     * @param SnippetPrinter  $printer
      * @param UndefinedStep[] $undefinedSteps
      */
-    public function printUndefinedSteps(SnippetPrinter $printer, array $undefinedSteps)
+    public function printUndefinedSteps(SnippetPrinter $printer, array $undefinedSteps): void
     {
-        $printableSteps = array();
+        $printableSteps = [];
         foreach ($undefinedSteps as $undefinedStep) {
             $suiteName = $undefinedStep->getEnvironment()->getSuite()->getName();
             $step = $undefinedStep->getStep();
 
             if (!isset($printableSteps[$suiteName])) {
-                $printableSteps[$suiteName] = array();
+                $printableSteps[$suiteName] = [];
             }
 
             $printableSteps[$suiteName][$step->getText()] = $step;
@@ -101,10 +97,8 @@ final class SnippetWriter
 
     /**
      * Appends snippet to appropriate targets.
-     *
-     * @param AggregateSnippet $snippet
      */
-    private function appendSnippet(AggregateSnippet $snippet)
+    private function appendSnippet(AggregateSnippet $snippet): void
     {
         foreach ($this->appenders as $appender) {
             if (!$appender->supportsSnippet($snippet)) {

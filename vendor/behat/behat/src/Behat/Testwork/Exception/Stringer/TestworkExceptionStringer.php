@@ -21,18 +21,12 @@ use Exception;
  */
 final class TestworkExceptionStringer implements ExceptionStringer
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsException(Exception $exception)
+    public function supportsException(Exception $exception): bool
     {
         return $exception instanceof TestworkException || $exception instanceof CallErrorException;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function stringException(Exception $exception, $verbosity)
+    public function stringException(Exception $exception, $verbosity): string
     {
         return trim($exception->getMessage());
     }

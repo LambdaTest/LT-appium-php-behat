@@ -24,65 +24,37 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class BeforeOutlineTeardown extends OutlineTested implements BeforeTeardown
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var OutlineNode
-     */
-    private $outline;
-    /**
-     * @var TestResult
-     */
-    private $result;
-
-    /**
      * Initializes event.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param OutlineNode $outline
-     * @param TestResult  $result
      */
     public function __construct(
         Environment $env,
-        FeatureNode $feature,
-        OutlineNode $outline,
-        TestResult $result
+        private readonly FeatureNode $feature,
+        private readonly OutlineNode $outline,
+        private readonly TestResult $result,
     ) {
         parent::__construct($env);
-
-        $this->feature = $feature;
-        $this->outline = $outline;
-        $this->result = $result;
     }
 
     /**
      * Returns feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns outline node.
-     *
-     * @return OutlineNode
      */
-    public function getOutline()
+    public function getOutline(): OutlineNode
     {
         return $this->outline;
     }
 
     /**
      * Returns current test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }

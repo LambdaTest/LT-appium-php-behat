@@ -25,82 +25,46 @@ use Behat\Testwork\Tester\Setup\Teardown;
 final class AfterOutlineTested extends OutlineTested implements AfterTested
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var OutlineNode
-     */
-    private $outline;
-    /**
-     * @var TestResult
-     */
-    private $result;
-    /**
-     * @var Teardown
-     */
-    private $teardown;
-
-    /**
      * Initializes event.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param OutlineNode $outline
-     * @param TestResult  $result
-     * @param Teardown    $teardown
      */
     public function __construct(
         Environment $env,
-        FeatureNode $feature,
-        OutlineNode $outline,
-        TestResult $result,
-        Teardown $teardown
+        private readonly FeatureNode $feature,
+        private readonly OutlineNode $outline,
+        private readonly TestResult $result,
+        private readonly Teardown $teardown,
     ) {
         parent::__construct($env);
-
-        $this->feature = $feature;
-        $this->outline = $outline;
-        $this->result = $result;
-        $this->teardown = $teardown;
     }
 
     /**
      * Returns feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns outline node.
-     *
-     * @return OutlineNode
      */
-    public function getOutline()
+    public function getOutline(): OutlineNode
     {
         return $this->outline;
     }
 
     /**
      * Returns current test result.
-     *
-     * @return TestResult
      */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }
 
     /**
      * Returns current test teardown.
-     *
-     * @return Teardown
      */
-    public function getTeardown()
+    public function getTeardown(): Teardown
     {
         return $this->teardown;
     }

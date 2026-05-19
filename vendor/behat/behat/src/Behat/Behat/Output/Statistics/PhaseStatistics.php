@@ -10,8 +10,10 @@
 
 namespace Behat\Behat\Output\Statistics;
 
-use Behat\Testwork\Counter\Timer;
+use Behat\Behat\Tester\Result\StepResult;
 use Behat\Testwork\Counter\Memory;
+use Behat\Testwork\Counter\Timer;
+use Behat\Testwork\Tester\Result\TestResult;
 
 /**
  * A TotalStatistics decorator to get statistics per phase.
@@ -36,7 +38,7 @@ final class PhaseStatistics implements Statistics
     /**
      * Resets the statistics.
      */
-    public function reset()
+    public function reset(): void
     {
         $this->statistics = new TotalStatistics();
     }
@@ -44,7 +46,7 @@ final class PhaseStatistics implements Statistics
     /**
      * Starts timer.
      */
-    public function startTimer()
+    public function startTimer(): void
     {
         $this->statistics->startTimer();
     }
@@ -52,7 +54,7 @@ final class PhaseStatistics implements Statistics
     /**
      * Stops timer.
      */
-    public function stopTimer()
+    public function stopTimer(): void
     {
         $this->statistics->stopTimer();
     }
@@ -79,30 +81,24 @@ final class PhaseStatistics implements Statistics
 
     /**
      * Registers scenario stat.
-     *
-     * @param ScenarioStat $stat
      */
-    public function registerScenarioStat(ScenarioStat $stat)
+    public function registerScenarioStat(ScenarioStat $stat): void
     {
         $this->statistics->registerScenarioStat($stat);
     }
 
     /**
      * Registers step stat.
-     *
-     * @param StepStat $stat
      */
-    public function registerStepStat(StepStat $stat)
+    public function registerStepStat(StepStat $stat): void
     {
         $this->statistics->registerStepStat($stat);
     }
 
     /**
      * Registers hook stat.
-     *
-     * @param HookStat $stat
      */
-    public function registerHookStat(HookStat $stat)
+    public function registerHookStat(HookStat $stat): void
     {
         $this->statistics->registerHookStat($stat);
     }
@@ -110,9 +106,9 @@ final class PhaseStatistics implements Statistics
     /**
      * Returns counters for different scenario result codes.
      *
-     * @return array[]
+     * @return array<TestResult::*, int>
      */
-    public function getScenarioStatCounts()
+    public function getScenarioStatCounts(): array
     {
         return $this->statistics->getScenarioStatCounts();
     }
@@ -140,7 +136,7 @@ final class PhaseStatistics implements Statistics
     /**
      * Returns counters for different step result codes.
      *
-     * @return array[]
+     * @return array<StepResult::*, int>
      */
     public function getStepStatCounts()
     {

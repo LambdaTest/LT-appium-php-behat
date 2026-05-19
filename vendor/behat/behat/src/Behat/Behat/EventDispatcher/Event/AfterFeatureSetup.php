@@ -23,45 +23,28 @@ use Behat\Testwork\Tester\Setup\Setup;
 final class AfterFeatureSetup extends FeatureTested implements AfterSetup
 {
     /**
-     * @var FeatureNode
-     */
-    private $feature;
-    /**
-     * @var Setup
-     */
-    private $setup;
-
-    /**
      * Initializes event.
-     *
-     * @param Environment $env
-     * @param FeatureNode $feature
-     * @param Setup       $setup
      */
-    public function __construct(Environment $env, FeatureNode $feature, Setup $setup)
-    {
+    public function __construct(
+        Environment $env,
+        private readonly FeatureNode $feature,
+        private readonly Setup $setup,
+    ) {
         parent::__construct($env);
-
-        $this->feature = $feature;
-        $this->setup = $setup;
     }
 
     /**
      * Returns feature.
-     *
-     * @return FeatureNode
      */
-    public function getFeature()
+    public function getFeature(): FeatureNode
     {
         return $this->feature;
     }
 
     /**
      * Returns current test setup.
-     *
-     * @return Setup
      */
-    public function getSetup()
+    public function getSetup(): Setup
     {
         return $this->setup;
     }

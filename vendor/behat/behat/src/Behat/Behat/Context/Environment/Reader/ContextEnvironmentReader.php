@@ -27,39 +27,34 @@ final class ContextEnvironmentReader implements EnvironmentReader
     /**
      * @var ContextReader[]
      */
-    private $contextReaders = array();
+    private $contextReaders = [];
 
     /**
      * Registers context loader.
-     *
-     * @param ContextReader $contextReader
      */
-    public function registerContextReader(ContextReader $contextReader)
+    public function registerContextReader(ContextReader $contextReader): void
     {
         $this->contextReaders[] = $contextReader;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsEnvironment(Environment $environment)
+    public function supportsEnvironment(Environment $environment): bool
     {
         return $environment instanceof ContextEnvironment;
     }
 
     /**
-     * {@inheritdoc}
+     * @return list<Callee>
      */
-    public function readEnvironmentCallees(Environment $environment)
+    public function readEnvironmentCallees(Environment $environment): array
     {
         if (!$environment instanceof ContextEnvironment) {
             throw new EnvironmentReadException(sprintf(
                 'ContextEnvironmentReader does not support `%s` environment.',
-                get_class($environment)
+                $environment::class
             ), $environment);
         }
 
-        $callees = array();
+        $callees = [];
         foreach ($environment->getContextClasses() as $contextClass) {
             $callees = array_merge(
                 $callees,
@@ -73,14 +68,13 @@ final class ContextEnvironmentReader implements EnvironmentReader
     /**
      * Reads callees from a specific suite's context.
      *
-     * @param ContextEnvironment $environment
      * @param string             $contextClass
      *
-     * @return Callee[]
+     * @return list<Callee>
      */
-    private function readContextCallees(ContextEnvironment $environment, $contextClass)
+    private function readContextCallees(ContextEnvironment $environment, $contextClass): array
     {
-        $callees = array();
+        $callees = [];
         foreach ($this->contextReaders as $loader) {
             $callees = array_merge(
                 $callees,

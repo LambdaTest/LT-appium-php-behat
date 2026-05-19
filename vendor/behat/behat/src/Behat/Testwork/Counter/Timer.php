@@ -11,27 +11,28 @@
 namespace Behat\Testwork\Counter;
 
 use Behat\Testwork\Counter\Exception\TimerException;
+use Stringable;
 
 /**
  * Provides time counting functionality.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class Timer
+final class Timer implements Stringable
 {
     /**
-     * @var null|float
+     * @var float|null
      */
     private $starTime;
     /**
-     * @var null|float
+     * @var float|null
      */
     private $stopTime;
 
     /**
      * Starts timer.
      */
-    public function start()
+    public function start(): void
     {
         $this->starTime = microtime(true);
     }
@@ -41,7 +42,7 @@ final class Timer
      *
      * @throws TimerException If timer has not been started
      */
-    public function stop()
+    public function stop(): void
     {
         if (!$this->starTime) {
             throw new TimerException('You can not stop timer that has not been started.');
@@ -51,7 +52,7 @@ final class Timer
     }
 
     /**
-     * @return null|float
+     * @return float
      *
      * @throws TimerException If timer has not been started
      */
@@ -71,20 +72,16 @@ final class Timer
 
     /**
      * Returns number of minutes passed.
-     *
-     * @return integer
      */
-    public function getMinutes()
+    public function getMinutes(): int
     {
         return intval(floor($this->getTime() / 60));
     }
 
     /**
      * Returns number of seconds passed.
-     *
-     * @return float
      */
-    public function getSeconds()
+    public function getSeconds(): float
     {
         return round($this->getTime() - ($this->getMinutes() * 60), 3);
     }

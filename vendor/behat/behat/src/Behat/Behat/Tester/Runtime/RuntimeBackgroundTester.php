@@ -18,8 +18,10 @@ use Behat\Testwork\Environment\Environment;
 use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 
 /**
  * Tester executing background tests in the runtime.
@@ -29,32 +31,19 @@ use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
 final class RuntimeBackgroundTester implements BackgroundTester
 {
     /**
-     * @var StepContainerTester
-     */
-    private $containerTester;
-
-    /**
      * Initializes tester.
-     *
-     * @param StepContainerTester $containerTester
      */
-    public function __construct(StepContainerTester $containerTester)
-    {
-        $this->containerTester = $containerTester;
+    public function __construct(
+        private readonly StepContainerTester $containerTester,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, FeatureNode $feature, $skip)
+    public function setUp(Environment $env, FeatureNode $feature, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, FeatureNode $feature, $skip)
+    public function test(Environment $env, FeatureNode $feature, $skip): TestResult
     {
         $background = $feature->getBackground();
 
@@ -74,10 +63,7 @@ final class RuntimeBackgroundTester implements BackgroundTester
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, FeatureNode $feature, $skip, TestResult $result)
+    public function tearDown(Environment $env, FeatureNode $feature, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

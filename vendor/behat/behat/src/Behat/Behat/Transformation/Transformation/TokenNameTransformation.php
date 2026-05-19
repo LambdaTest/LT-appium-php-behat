@@ -16,26 +16,18 @@ use Behat\Behat\Transformation\SimpleArgumentTransformation;
 use Behat\Testwork\Call\CallCenter;
 use Behat\Testwork\Call\RuntimeCallee;
 use ReflectionMethod;
+use Stringable;
 
 /**
  * Token name based transformation.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class TokenNameTransformation extends RuntimeCallee implements SimpleArgumentTransformation
+final class TokenNameTransformation extends RuntimeCallee implements Stringable, SimpleArgumentTransformation
 {
     public const PATTERN_REGEX = '/^\:\w+$/';
 
-    /**
-     * @var string
-     */
-    private $pattern;
-
-
-    /**
-     * {@inheritdoc}
-     */
-    static public function supportsPatternAndMethod($pattern, ReflectionMethod $method)
+    public static function supportsPatternAndMethod($pattern, ReflectionMethod $method): bool
     {
         return 1 === preg_match(self::PATTERN_REGEX, $pattern);
     }
@@ -45,33 +37,28 @@ final class TokenNameTransformation extends RuntimeCallee implements SimpleArgum
      *
      * @param string      $pattern
      * @param callable    $callable
-     * @param null|string $description
+     * @param string|null $description
      */
-    public function __construct($pattern, $callable, $description = null)
-    {
-        $this->pattern = $pattern;
-
+    public function __construct(
+        private $pattern,
+        $callable,
+        $description = null,
+    ) {
         parent::__construct($callable, $description);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsDefinitionAndArgument(DefinitionCall $definitionCall, $argumentIndex, $argumentValue)
+    public function supportsDefinitionAndArgument(DefinitionCall $definitionCall, $argumentIndex, $argumentArgumentValue): bool
     {
         return ':' . $argumentIndex === $this->pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function transformArgument(CallCenter $callCenter, DefinitionCall $definitionCall, $argumentIndex, $argumentValue)
     {
         $call = new TransformationCall(
             $definitionCall->getEnvironment(),
             $definitionCall->getCallee(),
             $this,
-            array($argumentValue)
+            [$argumentValue]
         );
 
         $result = $callCenter->makeCall($call);
@@ -83,25 +70,16 @@ final class TokenNameTransformation extends RuntimeCallee implements SimpleArgum
         return $result->getReturn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getPriority()
+    public function getPriority(): int
     {
         return 50;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPattern()
     {
         return $this->pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return 'TokenNameTransform ' . $this->pattern;

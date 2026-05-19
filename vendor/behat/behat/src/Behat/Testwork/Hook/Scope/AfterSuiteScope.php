@@ -10,8 +10,8 @@
 
 namespace Behat\Testwork\Hook\Scope;
 
-use Behat\Testwork\Specification\SpecificationIterator;
 use Behat\Testwork\Environment\Environment;
+use Behat\Testwork\Specification\SpecificationIterator;
 use Behat\Testwork\Tester\Result\TestResult;
 
 /**
@@ -22,68 +22,38 @@ use Behat\Testwork\Tester\Result\TestResult;
 final class AfterSuiteScope implements SuiteScope, AfterTestScope
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-    /**
-     * @var SpecificationIterator
-     */
-    private $iterator;
-    /**
-     * @var TestResult
-     */
-    private $result;
-
-    /**
      * Initializes scope.
      *
-     * @param Environment           $environment
-     * @param SpecificationIterator $iterator
-     * @param TestResult            $result
+     * @param SpecificationIterator<mixed> $iterator
      */
-    public function __construct(Environment $environment, SpecificationIterator $iterator, TestResult $result)
-    {
-        $this->environment = $environment;
-        $this->iterator = $iterator;
-        $this->result = $result;
+    public function __construct(
+        private readonly Environment $environment,
+        private readonly SpecificationIterator $iterator,
+        private readonly TestResult $result,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
         return self::AFTER;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSuite()
     {
         return $this->environment->getSuite();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getSpecificationIterator()
+    public function getSpecificationIterator(): SpecificationIterator
     {
         return $this->iterator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTestResult()
+    public function getTestResult(): TestResult
     {
         return $this->result;
     }

@@ -25,24 +25,18 @@ final class DefinitionFinder
     /**
      * @var SearchEngine[]
      */
-    private $engines = array();
+    private $engines = [];
 
     /**
      * Registers definition search engine.
-     *
-     * @param SearchEngine $searchEngine
      */
-    public function registerSearchEngine(SearchEngine $searchEngine)
+    public function registerSearchEngine(SearchEngine $searchEngine): void
     {
         $this->engines[] = $searchEngine;
     }
 
     /**
      * Searches definition for a provided step in a provided environment.
-     *
-     * @param Environment $environment
-     * @param FeatureNode $feature
-     * @param StepNode    $step
      *
      * @return SearchResult
      */

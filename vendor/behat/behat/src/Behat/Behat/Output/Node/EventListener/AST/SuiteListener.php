@@ -25,24 +25,14 @@ use Behat\Testwork\Output\Node\EventListener\EventListener;
 final class SuiteListener implements EventListener
 {
     /**
-     * @var SetupPrinter
-     */
-    private $setupPrinter;
-
-    /**
      * Initializes listener.
-     *
-     * @param SetupPrinter $setupPrinter
      */
-    public function __construct(SetupPrinter $setupPrinter)
-    {
-        $this->setupPrinter = $setupPrinter;
+    public function __construct(
+        private readonly SetupPrinter $setupPrinter,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function listenEvent(Formatter $formatter, Event $event, $eventName)
+    public function listenEvent(Formatter $formatter, Event $event, $eventName): void
     {
         if ($event instanceof AfterSuiteSetup) {
             $this->setupPrinter->printSetup($formatter, $event->getSetup());

@@ -22,33 +22,24 @@ use Behat\Testwork\Environment\EnvironmentManager;
 final class DefinitionRepository
 {
     /**
-     * @var EnvironmentManager
-     */
-    private $environmentManager;
-
-    /**
      * Initializes repository.
-     *
-     * @param EnvironmentManager $environmentManager
      */
-    public function __construct(EnvironmentManager $environmentManager)
-    {
-        $this->environmentManager = $environmentManager;
+    public function __construct(
+        private readonly EnvironmentManager $environmentManager,
+    ) {
     }
 
     /**
      * Returns all available definitions for a specific environment.
      *
-     * @param Environment $environment
-     *
-     * @return Definition[]
+     * @return list<Definition>
      *
      * @throws RedundantStepException
      */
-    public function getEnvironmentDefinitions(Environment $environment)
+    public function getEnvironmentDefinitions(Environment $environment): array
     {
-        $patterns = array();
-        $definitions = array();
+        $patterns = [];
+        $definitions = [];
 
         foreach ($this->environmentManager->readEnvironmentCallees($environment) as $callee) {
             if (!$callee instanceof Definition) {

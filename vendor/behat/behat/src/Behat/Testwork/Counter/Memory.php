@@ -10,24 +10,24 @@
 
 namespace Behat\Testwork\Counter;
 
+use Stringable;
+
 /**
  * Counts amount of system memory being used.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class Memory
+final class Memory implements Stringable
 {
     /**
      * @var string[]
      */
-    private $units = array('B', 'Kb', 'Mb', 'Gb', 'Tb');
+    private $units = ['B', 'Kb', 'Mb', 'Gb', 'Tb'];
 
     /**
      * Returns current memory usage.
-     *
-     * @return integer
      */
-    public function getMemoryUsage()
+    public function getMemoryUsage(): int
     {
         return memory_get_usage();
     }
@@ -45,11 +45,9 @@ final class Memory
     /**
      * Humanizes usage information.
      *
-     * @param integer $bytes
-     *
-     * @return string
+     * @param int $bytes
      */
-    private function humanize($bytes)
+    private function humanize($bytes): string
     {
         $e = intval(floor(log($bytes) / log(1024)));
 
@@ -57,6 +55,6 @@ final class Memory
             return 'Can not calculate memory usage';
         }
 
-        return sprintf('%.2f%s', ($bytes / pow(1024, floor($e))), $this->units[$e]);
+        return sprintf('%.2f%s', $bytes / 1024 ** floor($e), $this->units[$e]);
     }
 }

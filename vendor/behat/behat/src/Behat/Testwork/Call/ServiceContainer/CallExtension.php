@@ -10,6 +10,8 @@
 
 namespace Behat\Testwork\Call\ServiceContainer;
 
+use Behat\Testwork\Call\CallCenter;
+use Behat\Testwork\Call\Handler\RuntimeCallHandler;
 use Behat\Testwork\ServiceContainer\Extension;
 use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Behat\Testwork\ServiceContainer\ServiceProcessor;
@@ -44,58 +46,39 @@ final class CallExtension implements Extension
 
     /**
      * Initializes extension.
-     *
-     * @param null|ServiceProcessor $processor
      */
-    public function __construct(ServiceProcessor $processor = null)
+    public function __construct(?ServiceProcessor $processor = null)
     {
-        $this->processor = $processor ? : new ServiceProcessor();
+        $this->processor = $processor ?: new ServiceProcessor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigKey()
+    public function getConfigKey(): string
     {
         return 'calls';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(ExtensionManager $extensionManager)
+    public function initialize(ExtensionManager $extensionManager): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configure(ArrayNodeDefinition $builder)
+    public function configure(ArrayNodeDefinition $builder): void
     {
         $builder
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('error_reporting')
                     ->info('Call executor will catch exceptions matching this level')
-                    ->defaultValue(E_ALL | E_STRICT)
-                ->end()
-            ->end()
+                    ->defaultValue(error_reporting())
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function load(ContainerBuilder $container, array $config)
+    public function load(ContainerBuilder $container, array $config): void
     {
         $this->loadCallCenter($container);
         $this->loadCallHandlers($container, $config['error_reporting']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $this->processCallFilters($container);
         $this->processCallHandlers($container);
@@ -105,85 +88,74 @@ final class CallExtension implements Extension
 
     /**
      * Loads call center service.
-     *
-     * @param ContainerBuilder $container
      */
-    protected function loadCallCenter(ContainerBuilder $container)
+    protected function loadCallCenter(ContainerBuilder $container): void
     {
-        $definition = new Definition('Behat\Testwork\Call\CallCenter');
+        $definition = new Definition(CallCenter::class);
         $container->setDefinition(self::CALL_CENTER_ID, $definition);
     }
 
     /**
      * Loads prebuilt call handlers.
      *
-     * @param ContainerBuilder $container
-     * @param integer          $errorReporting
+     * @param int $errorReporting
      */
-    protected function loadCallHandlers(ContainerBuilder $container, $errorReporting)
+    protected function loadCallHandlers(ContainerBuilder $container, $errorReporting): void
     {
-        $definition = new Definition('Behat\Testwork\Call\Handler\RuntimeCallHandler', array($errorReporting));
-        $definition->addTag(self::CALL_HANDLER_TAG, array('priority' => 50));
+        $definition = new Definition(RuntimeCallHandler::class, [$errorReporting]);
+        $definition->addTag(self::CALL_HANDLER_TAG, ['priority' => 50]);
         $container->setDefinition(self::CALL_HANDLER_TAG . '.runtime', $definition);
     }
 
     /**
      * Registers all call filters to the CallCenter.
-     *
-     * @param ContainerBuilder $container
      */
-    protected function processCallFilters(ContainerBuilder $container)
+    protected function processCallFilters(ContainerBuilder $container): void
     {
         $references = $this->processor->findAndSortTaggedServices($container, CallExtension::CALL_FILTER_TAG);
         $definition = $container->getDefinition(CallExtension::CALL_CENTER_ID);
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerCallFilter', array($reference));
+            $definition->addMethodCall('registerCallFilter', [$reference]);
         }
     }
 
     /**
      * Registers all call handlers to the CallCenter.
-     *
-     * @param ContainerBuilder $container
      */
-    protected function processCallHandlers(ContainerBuilder $container)
+    protected function processCallHandlers(ContainerBuilder $container): void
     {
         $references = $this->processor->findAndSortTaggedServices($container, CallExtension::CALL_HANDLER_TAG);
         $definition = $container->getDefinition(CallExtension::CALL_CENTER_ID);
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerCallHandler', array($reference));
+            $definition->addMethodCall('registerCallHandler', [$reference]);
         }
     }
 
     /**
      * Registers all call result filters to the CallCenter.
-     *
-     * @param ContainerBuilder $container
      */
-    protected function processResultFilters(ContainerBuilder $container)
+    protected function processResultFilters(ContainerBuilder $container): void
     {
         $references = $this->processor->findAndSortTaggedServices($container, CallExtension::RESULT_FILTER_TAG);
         $definition = $container->getDefinition(CallExtension::CALL_CENTER_ID);
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerResultFilter', array($reference));
+            $definition->addMethodCall('registerResultFilter', [$reference]);
         }
     }
 
     /**
      * Registers all exception handlers to the CallCenter.
-     *
-     * @param ContainerBuilder $container
      */
-    private function processExceptionHandlers(ContainerBuilder $container)
+    private function processExceptionHandlers(ContainerBuilder $container): void
     {
         $references = $this->processor->findAndSortTaggedServices($container, CallExtension::EXCEPTION_HANDLER_TAG);
         $definition = $container->getDefinition(CallExtension::CALL_CENTER_ID);
 
         foreach ($references as $reference) {
-            $definition->addMethodCall('registerExceptionHandler', array($reference));
+            $definition->addMethodCall('registerExceptionHandler', [$reference]);
         }
     }
 }

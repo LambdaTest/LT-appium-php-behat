@@ -11,6 +11,7 @@
 namespace Behat\Testwork\EventDispatcher\Event;
 
 use Behat\Testwork\Specification\NoSpecificationsIterator;
+use Behat\Testwork\Specification\SpecificationIterator;
 
 /**
  * Represents an event in which suite was aborted.
@@ -19,10 +20,7 @@ use Behat\Testwork\Specification\NoSpecificationsIterator;
  */
 final class AfterSuiteAborted extends SuiteTested
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getSpecificationIterator()
+    public function getSpecificationIterator(): SpecificationIterator
     {
         return new NoSpecificationsIterator($this->getSuite());
     }

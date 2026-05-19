@@ -17,52 +17,42 @@ use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 use Behat\Testwork\Tester\SuiteTester;
 
 /**
  * Tester executing exercises in the runtime.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @template TSpec
+ *
+ * @implements Exercise<TSpec>
  */
 final class RuntimeExercise implements Exercise
 {
     /**
-     * @var EnvironmentManager
-     */
-    private $envManager;
-    /**
-     * @var SuiteTester
-     */
-    private $suiteTester;
-
-    /**
      * Initializes tester.
      *
-     * @param EnvironmentManager $envManager
-     * @param SuiteTester        $suiteTester
+     * @param SuiteTester<TSpec> $suiteTester
      */
-    public function __construct(EnvironmentManager $envManager, SuiteTester $suiteTester)
-    {
-        $this->envManager = $envManager;
-        $this->suiteTester = $suiteTester;
+    public function __construct(
+        private readonly EnvironmentManager $envManager,
+        private readonly SuiteTester $suiteTester,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(array $iterators, $skip)
+    public function setUp(array $iterators, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(array $iterators, $skip = false)
+    public function test(array $iterators, $skip = false): TestResult
     {
-        $results = array();
+        $results = [];
         foreach (GroupedSpecificationIterator::group($iterators) as $iterator) {
             $environment = $this->envManager->buildEnvironment($iterator->getSuite());
 
@@ -78,10 +68,7 @@ final class RuntimeExercise implements Exercise
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(array $iterators, $skip, TestResult $result)
+    public function tearDown(array $iterators, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

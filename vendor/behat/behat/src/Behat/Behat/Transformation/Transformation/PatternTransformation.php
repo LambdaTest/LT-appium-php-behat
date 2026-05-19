@@ -17,46 +17,38 @@ use Behat\Behat\Transformation\Transformation;
 use Behat\Testwork\Call\CallCenter;
 use Behat\Testwork\Call\RuntimeCallee;
 use Exception;
+use Stringable;
 
 /**
  * Pattern-based transformation.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
  */
-final class PatternTransformation extends RuntimeCallee implements Transformation
+final class PatternTransformation extends RuntimeCallee implements Stringable, Transformation
 {
-    /**
-     * @var string
-     */
-    private $pattern;
-
     /**
      * Initializes transformation.
      *
      * @param string      $pattern
      * @param callable    $callable
-     * @param null|string $description
+     * @param string|null $description
      */
-    public function __construct($pattern, $callable, $description = null)
-    {
-        $this->pattern = $pattern;
-
+    public function __construct(
+        private $pattern,
+        $callable, $description = null,
+    ) {
         parent::__construct($callable, $description);
     }
 
     /**
      * Checks if transformer supports argument.
      *
-     * @param RegexGenerator $regexGenerator
-     * @param DefinitionCall $definitionCall
-     * @param mixed          $argumentValue
-     *
      * @return bool
      */
     public function supportsDefinitionAndArgument(
         RegexGenerator $regexGenerator,
         DefinitionCall $definitionCall,
-        $argumentValue
+        $argumentValue,
     ) {
         $regex = $regexGenerator->generateRegex(
             $definitionCall->getEnvironment()->getSuite()->getName(),
@@ -70,20 +62,13 @@ final class PatternTransformation extends RuntimeCallee implements Transformatio
     /**
      * Transforms argument value using transformation and returns a new one.
      *
-     * @param RegexGenerator $regexGenerator
-     * @param CallCenter     $callCenter
-     * @param DefinitionCall $definitionCall
-     * @param mixed          $argumentValue
-     *
-     * @return mixed
-     *
      * @throws Exception If transformation throws exception
      */
     public function transformArgument(
         RegexGenerator $regexGenerator,
         CallCenter $callCenter,
         DefinitionCall $definitionCall,
-        $argumentValue
+        $argumentValue,
     ) {
         $regex = $regexGenerator->generateRegex(
             $definitionCall->getEnvironment()->getSuite()->getName(),
@@ -109,30 +94,17 @@ final class PatternTransformation extends RuntimeCallee implements Transformatio
         return $result->getReturn();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPattern()
     {
         return $this->pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function __toString()
     {
         return 'PatternTransform ' . $this->pattern;
     }
 
-    /**
-     * @param $regexPattern
-     * @param $argumentValue
-     * @param $match
-     *
-     * @return bool
-     */
-    private function match($regexPattern, $argumentValue, &$match)
+    private function match($regexPattern, $argumentValue, &$match): bool
     {
         if (is_string($argumentValue) && preg_match($regexPattern, $argumentValue, $match)) {
             // take arguments from capture groups if there are some

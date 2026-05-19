@@ -25,12 +25,11 @@ final class Validator
     /**
      * Validates that all arguments are in place, throws exception otherwise.
      *
-     * @param ReflectionFunctionAbstract $function
      * @param mixed[]                    $arguments
      *
      * @throws UnknownParameterValueException
      */
-    public function validateArguments(ReflectionFunctionAbstract $function, array $arguments)
+    public function validateArguments(ReflectionFunctionAbstract $function, array $arguments): void
     {
         foreach ($function->getParameters() as $num => $parameter) {
             $this->validateArgument($parameter, $num, $arguments);
@@ -40,11 +39,9 @@ final class Validator
     /**
      * Validates given argument.
      *
-     * @param ReflectionParameter $parameter
-     * @param integer             $parameterIndex
-     * @param array               $givenArguments
+     * @param int $parameterIndex
      */
-    private function validateArgument(ReflectionParameter $parameter, $parameterIndex, array $givenArguments)
+    private function validateArgument(ReflectionParameter $parameter, $parameterIndex, array $givenArguments): void
     {
         if ($parameter->isDefaultValueAvailable()) {
             return;
@@ -67,12 +64,8 @@ final class Validator
 
     /**
      * Returns function path for a provided reflection.
-     *
-     * @param ReflectionFunctionAbstract $function
-     *
-     * @return string
      */
-    private function getFunctionPath(ReflectionFunctionAbstract $function)
+    private function getFunctionPath(ReflectionFunctionAbstract $function): string
     {
         if ($function instanceof ReflectionMethod) {
             return sprintf(

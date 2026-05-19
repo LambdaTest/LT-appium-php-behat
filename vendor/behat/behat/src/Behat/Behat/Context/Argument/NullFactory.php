@@ -22,19 +22,13 @@ use Behat\Testwork\Suite\Suite;
  */
 final class NullFactory implements ArgumentResolverFactory, SuiteScopedResolverFactory
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function generateArgumentResolvers(Suite $suite)
+    public function generateArgumentResolvers(Suite $suite): array
     {
-        return array();
+        return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function createArgumentResolvers(Environment $environment)
+    public function createArgumentResolvers(Environment $environment): array
     {
-        return array();
+        return [];
     }
 }

@@ -18,8 +18,10 @@ use Behat\Testwork\Environment\EnvironmentManager;
 use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 
 /**
  * Scenario tester that isolates the environment for each scenario.
@@ -29,38 +31,20 @@ use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
 final class IsolatingScenarioTester implements ScenarioTester
 {
     /**
-     * @var ScenarioTester
-     */
-    private $decoratedTester;
-    /**
-     * @var EnvironmentManager
-     */
-    private $envManager;
-
-    /**
      * Initialises tester.
-     *
-     * @param ScenarioTester     $decoratedTester
-     * @param EnvironmentManager $envManager
      */
-    public function __construct(ScenarioTester $decoratedTester, EnvironmentManager $envManager)
-    {
-        $this->decoratedTester = $decoratedTester;
-        $this->envManager = $envManager;
+    public function __construct(
+        private readonly ScenarioTester $decoratedTester,
+        private readonly EnvironmentManager $envManager,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, FeatureNode $feature, Scenario $scenario, $skip)
+    public function setUp(Environment $env, FeatureNode $feature, Scenario $scenario, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, FeatureNode $feature, Scenario $scenario, $skip)
+    public function test(Environment $env, FeatureNode $feature, Scenario $scenario, $skip): TestResult
     {
         $isolatedEnvironment = $this->envManager->isolateEnvironment($env, $scenario);
 
@@ -74,10 +58,7 @@ final class IsolatingScenarioTester implements ScenarioTester
         return new TestWithSetupResult($setup, $integerResult, $teardown);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, FeatureNode $feature, Scenario $scenario, $skip, TestResult $result)
+    public function tearDown(Environment $env, FeatureNode $feature, Scenario $scenario, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

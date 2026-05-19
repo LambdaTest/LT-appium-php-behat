@@ -38,23 +38,18 @@ interface Extension extends CompilerPassInterface
      * before any extension `configure()` method is called. This allows extensions
      * to hook into the configuration of other extensions providing such an
      * extension point.
-     *
-     * @param ExtensionManager $extensionManager
      */
     public function initialize(ExtensionManager $extensionManager);
 
     /**
      * Setups configuration for the extension.
-     *
-     * @param ArrayNodeDefinition $builder
      */
     public function configure(ArrayNodeDefinition $builder);
 
     /**
      * Loads extension services into temporary container.
      *
-     * @param ContainerBuilder $container
-     * @param array            $config
+     * @param array<string, mixed> $config
      */
     public function load(ContainerBuilder $container, array $config);
 }

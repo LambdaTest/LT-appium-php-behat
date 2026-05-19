@@ -20,24 +20,14 @@ use Behat\Testwork\Suite\Exception\ParameterNotFoundException;
 final class GenericSuite implements Suite
 {
     /**
-     * @var string
-     */
-    private $name;
-    /**
-     * @var array
-     */
-    private $settings = array();
-
-    /**
      * Initializes suite.
      *
      * @param string $name
-     * @param array  $settings
      */
-    public function __construct($name, array $settings)
-    {
-        $this->name = $name;
-        $this->settings = $settings;
+    public function __construct(
+        private $name,
+        private array $settings,
+    ) {
     }
 
     /**
@@ -52,10 +42,8 @@ final class GenericSuite implements Suite
 
     /**
      * Returns suite settings.
-     *
-     * @return array
      */
-    public function getSettings()
+    public function getSettings(): array
     {
         return $this->settings;
     }
@@ -64,10 +52,8 @@ final class GenericSuite implements Suite
      * Checks if a setting with provided name exists.
      *
      * @param string $key
-     *
-     * @return bool
      */
-    public function hasSetting($key)
+    public function hasSetting($key): bool
     {
         return array_key_exists($key, $this->settings);
     }
@@ -76,8 +62,6 @@ final class GenericSuite implements Suite
      * Returns setting value by its key.
      *
      * @param string $key
-     *
-     * @return mixed
      *
      * @throws ParameterNotFoundException If setting is not set
      */

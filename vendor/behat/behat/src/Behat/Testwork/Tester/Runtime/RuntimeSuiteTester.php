@@ -16,8 +16,10 @@ use Behat\Testwork\Tester\Result\IntegerTestResult;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\TestResults;
 use Behat\Testwork\Tester\Result\TestWithSetupResult;
+use Behat\Testwork\Tester\Setup\Setup;
 use Behat\Testwork\Tester\Setup\SuccessfulSetup;
 use Behat\Testwork\Tester\Setup\SuccessfulTeardown;
+use Behat\Testwork\Tester\Setup\Teardown;
 use Behat\Testwork\Tester\SpecificationTester;
 use Behat\Testwork\Tester\SuiteTester;
 
@@ -25,38 +27,31 @@ use Behat\Testwork\Tester\SuiteTester;
  * Tester executing suite tests in the runtime.
  *
  * @author Konstantin Kudryashov <ever.zet@gmail.com>
+ *
+ * @template TSpec
+ *
+ * @implements SuiteTester<TSpec>
  */
 final class RuntimeSuiteTester implements SuiteTester
 {
     /**
-     * @var SpecificationTester
-     */
-    private $specTester;
-
-    /**
      * Initializes tester.
      *
-     * @param SpecificationTester $specTester
+     * @param SpecificationTester<TSpec> $specTester
      */
-    public function __construct(SpecificationTester $specTester)
-    {
-        $this->specTester = $specTester;
+    public function __construct(
+        private readonly SpecificationTester $specTester,
+    ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp(Environment $env, SpecificationIterator $iterator, $skip)
+    public function setUp(Environment $env, SpecificationIterator $iterator, $skip): Setup
     {
         return new SuccessfulSetup();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function test(Environment $env, SpecificationIterator $iterator, $skip = false)
+    public function test(Environment $env, SpecificationIterator $iterator, $skip = false): TestResult
     {
-        $results = array();
+        $results = [];
         foreach ($iterator as $specification) {
             $setup = $this->specTester->setUp($env, $specification, $skip);
             $localSkip = !$setup->isSuccessful() || $skip;
@@ -70,10 +65,7 @@ final class RuntimeSuiteTester implements SuiteTester
         return new TestResults($results);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function tearDown(Environment $env, SpecificationIterator $iterator, $skip, TestResult $result)
+    public function tearDown(Environment $env, SpecificationIterator $iterator, $skip, TestResult $result): Teardown
     {
         return new SuccessfulTeardown();
     }

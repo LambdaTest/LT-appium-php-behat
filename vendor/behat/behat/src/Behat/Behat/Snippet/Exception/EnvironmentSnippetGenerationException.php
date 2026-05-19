@@ -21,29 +21,21 @@ use RuntimeException;
 final class EnvironmentSnippetGenerationException extends RuntimeException implements SnippetException
 {
     /**
-     * @var Environment
-     */
-    private $environment;
-
-    /**
      * Initializes exception.
      *
      * @param string      $message
-     * @param Environment $environment
      */
-    public function __construct($message, Environment $environment)
-    {
-        $this->environment = $environment;
-
+    public function __construct(
+        $message,
+        private readonly Environment $environment,
+    ) {
         parent::__construct($message);
     }
 
     /**
      * Returns environment that caused exception.
-     *
-     * @return Environment
      */
-    public function getEnvironment()
+    public function getEnvironment(): Environment
     {
         return $this->environment;
     }

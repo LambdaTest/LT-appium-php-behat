@@ -21,30 +21,22 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 final class OutputManager
 {
     /**
-     * @var EventDispatcherInterface
-     */
-    private $eventDispatcher;
-    /**
      * @var Formatter[]
      */
-    private $formatters = array();
+    private $formatters = [];
 
     /**
      * Initializes manager.
-     *
-     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
+    public function __construct(
+        private readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
     /**
      * Registers formatter.
-     *
-     * @param Formatter $formatter
      */
-    public function registerFormatter(Formatter $formatter)
+    public function registerFormatter(Formatter $formatter): void
     {
         if (isset($this->formatters[$formatter->getName()])) {
             $this->disableFormatter($formatter->getName());
@@ -57,10 +49,8 @@ final class OutputManager
      * Checks if formatter is registered.
      *
      * @param string $name
-     *
-     * @return bool
      */
-    public function isFormatterRegistered($name)
+    public function isFormatterRegistered($name): bool
     {
         return isset($this->formatters[$name]);
     }
@@ -102,7 +92,7 @@ final class OutputManager
      *
      * @param string $formatter
      */
-    public function enableFormatter($formatter)
+    public function enableFormatter($formatter): void
     {
         if (!$this->isFormatterRegistered($formatter) && class_exists($formatter)) {
             $formatterInstance = new $formatter();
@@ -121,7 +111,7 @@ final class OutputManager
      *
      * @param string $formatter
      */
-    public function disableFormatter($formatter)
+    public function disableFormatter($formatter): void
     {
         $this->eventDispatcher->removeSubscriber($this->getFormatter($formatter));
     }
@@ -129,9 +119,9 @@ final class OutputManager
     /**
      * Disable all registered formatters.
      */
-    public function disableAllFormatters()
+    public function disableAllFormatters(): void
     {
-        array_map(array($this, 'disableFormatter'), array_keys($this->formatters));
+        array_map($this->disableFormatter(...), array_keys($this->formatters));
     }
 
     /**
@@ -139,9 +129,8 @@ final class OutputManager
      *
      * @param string $formatter
      * @param string $parameterName
-     * @param mixed  $parameterValue
      */
-    public function setFormatterParameter($formatter, $parameterName, $parameterValue)
+    public function setFormatterParameter($formatter, $parameterName, $parameterValue): void
     {
         $formatter = $this->getFormatter($formatter);
         $printer = $formatter->getOutputPrinter();
@@ -172,9 +161,8 @@ final class OutputManager
      * Sets provided formatter parameters.
      *
      * @param string $formatter
-     * @param array  $parameters
      */
-    public function setFormatterParameters($formatter, array $parameters)
+    public function setFormatterParameters($formatter, array $parameters): void
     {
         foreach ($parameters as $key => $val) {
             $this->setFormatterParameter($formatter, $key, $val);
@@ -185,9 +173,8 @@ final class OutputManager
      * Sets provided parameter to all registered formatters.
      *
      * @param string $parameterName
-     * @param mixed  $parameterValue
      */
-    public function setFormattersParameter($parameterName, $parameterValue)
+    public function setFormattersParameter($parameterName, $parameterValue): void
     {
         foreach (array_keys($this->formatters) as $formatter) {
             $this->setFormatterParameter($formatter, $parameterName, $parameterValue);
@@ -196,10 +183,8 @@ final class OutputManager
 
     /**
      * Sets provided parameters to all registered formatters.
-     *
-     * @param array $parameters
      */
-    public function setFormattersParameters(array $parameters)
+    public function setFormattersParameters(array $parameters): void
     {
         foreach ($parameters as $key => $val) {
             $this->setFormattersParameter($key, $val);
